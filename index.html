@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>💕 Surprise — One Page (Love Gate, No-Music)</title>
+  <title>💕 Surprise — One Page (Preview & Full Popup)</title>
   <style>
     :root{
       --pink:#ff7aa2; --rose:#ff9fb8; --mint:#a5f3e6; --lav:#c7d2fe; --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.15);
@@ -13,13 +13,14 @@
     html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:#fff7fb}
     .hidden{display:none!important}
     .center{display:flex;align-items:center;justify-content:center}
+
     .btn{cursor:pointer;padding:.9rem 1.2rem;border:none;border-radius:999px;background:var(--pink);color:#fff;font-weight:700;box-shadow:0 10px 24px var(--shadow);transition:.2s}
     .btn:hover:not([disabled]){transform:translateY(-2px)}
     .btn[disabled]{opacity:.6; cursor:not-allowed}
     .btn.secondary{background:#fff;color:var(--pink);border:2px solid var(--pink)}
-    .tiny{font-size:.85rem;color:var(--muted)}
     .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.85rem;cursor:pointer}
     .pill.danger{border-color:#fecaca;color:#b91c1c}
+    .tiny{font-size:.85rem;color:var(--muted)}
 
     /* Gate */
     #gate{min-height:100dvh;background:var(--grad);padding:20px}
@@ -45,30 +46,57 @@
 
     /* Book */
     #bookWrap{max-width:980px;margin:30px auto 100px;padding:16px}
-    .book{position:relative;perspective:1600px;height:clamp(380px,60vw,560px)}
+    .book{position:relative;perspective:1600px;min-height:420px}
     .page{position:absolute;inset:0;background:#fff;border-radius:16px;box-shadow:0 22px 55px var(--shadow);display:grid;grid-template-rows:auto 1fr auto;transform-origin:left center;transition:transform .8s cubic-bezier(.22,.61,.36,1)}
     .page.flipped{transform:rotateY(-180deg)}
     .header{padding:12px 16px;background:linear-gradient(180deg,#fff,#fff7fb);display:flex;justify-content:space-between;align-items:center;gap:8px}
     .header .row{display:flex;gap:8px;align-items:center}
-    .body{padding:16px;display:grid;gap:10px}
+    .body{padding:16px;display:grid;gap:14px;grid-template-columns:1fr}
+
+    /* Upload (no image yet) */
     .photo{
-      background:#f6f9fc;border:2px dashed #e5e9f2;border-radius:12px;
-      display:grid;place-items:center;position:relative;overflow:hidden;
-      aspect-ratio:16/9; /* ให้เสถียรทุกจอ */
+      display:grid; place-items:center;
+      aspect-ratio:4/3;
+      background:#f6f9fc;
+      border:2px dashed #e5e9f2;
+      border-radius:12px;
     }
-    .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+
+    /* Preview (small) */
+    .previewWrap{display:grid;place-items:center}
+    .preview{
+      width:clamp(200px,45vw,420px);
+      aspect-ratio:4/3;
+      border-radius:12px; overflow:hidden; position:relative;
+      box-shadow:0 10px 28px rgba(0,0,0,.15); cursor:pointer;
+    }
+    .preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+    .hint{position:absolute;right:10px;bottom:10px;background:rgba(255,255,255,.9);border:1px dashed #ffc2d4;color:#c2185b;border-radius:999px;padding:6px 10px;font-size:.85rem}
+
+    /* Editable hint */
     .editable{outline:2px dashed #ffc2d4; outline-offset:4px; border-radius:10px; padding:6px 8px}
     .editable:focus{background:#fff7fb}
     .metaLine{display:flex;gap:8px;flex-wrap:wrap;color:#6f5b66}
     .metaLine span{background:#fdf2f8;border-radius:999px;padding:6px 10px}
-    .note{color:#6f5b66}
+    .note{
+      color:#6f5b66; line-height:1.55; word-break:break-word;
+      padding:10px 12px; border-radius:10px; background:#fff;
+      outline:2px dashed #ffc2d4; outline-offset:4px;
+    }
     .controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;flex-wrap:wrap}
 
-    /* Popup */
+    /* Info/Confirm popup */
     #infoBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:70}
     #infoBackdrop.active{display:flex}
     #infoBox{background:#fff;border-radius:18px;max-width:480px;width:calc(100% - 40px);padding:20px 18px;box-shadow:0 20px 60px var(--shadow);text-align:center}
     #dlgBtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+    /* Full image lightbox */
+    #imgBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:99}
+    #imgBackdrop.active{display:flex}
+    #imgBox{max-width:95vw;max-height:92vh;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.45)}
+    #imgBox img{display:block;max-width:95vw;max-height:92vh;object-fit:contain}
+    #imgClose{position:absolute;top:14px;right:14px;background:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
   </style>
 </head>
 <body>
@@ -92,7 +120,7 @@
     <section id="albums" class="hidden">
       <div style="max-width:1100px;margin:auto;padding:0 16px">
         <h2 style="margin:20px 0 10px">อัลบั้มครบรอบของเรา</h2>
-        <div class="tiny">ถ้ายังไม่มีข้อมูล จะขึ้นป๊อปอัปบอกว่า “ยังไม่ถึงเวลาของก้าวต่อไป” พร้อมปุ่ม “เพิ่มหน้าแรก”</div>
+        <div class="tiny">อัลบั้มว่างจะมีป๊อปอัป “ยังไม่ถึงเวลาของก้าวต่อไป ✨” พร้อมปุ่ม “เพิ่มหน้าแรก”</div>
         <div class="grid" id="albumGrid" style="margin-top:14px"></div>
       </div>
     </section>
@@ -114,12 +142,13 @@
           <span class="tiny" id="pageCounter"></span>
         </div>
         <p class="tiny" style="margin-top:8px">
-          คลิกพื้นที่รูปเพื่ออัปโหลด • ส่วน <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> <em>แก้ได้</em> (มีกรอบเส้นปะช่วยบอก) • ลบหน้าได้จากปุ่มถังขยะ
+          ถ้ายังไม่มีรูปให้คลิกอัปโหลด • หลังอัปโหลดจะเห็น “พรีวิวจิ๋ว” และปุ่มดูรูปเต็ม •
+          ช่อง <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> แก้ได้ (มีกรอบเส้นปะ) • ลบหน้าได้จากปุ่มถังขยะ
         </p>
       </div>
     </section>
 
-    <!-- Popup -->
+    <!-- Info / Confirm popup -->
     <div id="infoBackdrop" role="dialog" aria-modal="true" aria-labelledby="infoText">
       <div id="infoBox">
         <div id="infoText" style="margin-bottom:12px">ข้อความ</div>
@@ -129,6 +158,12 @@
           <button class="btn secondary hidden" id="dlgAlt">เพิ่มหน้าแรก</button>
         </div>
       </div>
+    </div>
+
+    <!-- Full image lightbox -->
+    <div id="imgBackdrop" aria-modal="true" role="dialog">
+      <button id="imgClose">ปิด</button>
+      <div id="imgBox"><img id="fullImg" alt="รูปเต็ม"></div>
     </div>
   </main>
 
@@ -157,14 +192,12 @@
   const noMsg  = document.getElementById('noMsg');
 
   btnYes.addEventListener('click', ()=>{
-    // ไปหน้าอัลบั้มทันที
     gate.classList.add('hidden');
     app.classList.remove('hidden');
     showAlbums();
   });
 
   btnNo.addEventListener('click', ()=>{
-    // แสดงข้อความ + นับถอยหลัง 5 วิ และ disable ปุ่ม
     let left = 5;
     btnYes.disabled = btnNo.disabled = true;
     noMsg.style.display = 'block';
@@ -193,7 +226,7 @@
     setTimeout(()=>h.remove(), 13000);
   }, 400);
 
-  /* ---------- Popup helpers ---------- */
+  /* ---------- Popups ---------- */
   const infoBackdrop=document.getElementById('infoBackdrop');
   const infoText=document.getElementById('infoText');
   const dlgYes=document.getElementById('dlgYes');
@@ -220,7 +253,7 @@
     dlgNo.onclick=close;
     dlgYes.onclick=()=>{ close(); onYes && onYes(); };
   }
-  function infoWithAlt(msg,{altText='เพิ่มหน้าแรก', onAlt}={}){ // info + alt button
+  function infoWithAlt(msg,{altText='เพิ่มหน้าแรก', onAlt}={}){ // info + alt
     infoText.textContent=msg;
     dlgNo.classList.add('hidden');
     dlgYes.textContent='ตกลง';
@@ -247,7 +280,7 @@
       const cover = (alb.pages||[]).find(p=>p.img);
       const card=document.createElement('div'); card.className='card';
       card.innerHTML = `
-        <div class="thumb">${cover?`<img src="${cover.img}">`:''}</div>
+        <div class="thumb">${cover?`<img src="${cover.img}" alt="">`:''}</div>
         <div class="meta">
           <div>
             <strong>${alb.title||('ครบรอบ '+alb.month+' เดือน')}</strong>
@@ -303,7 +336,19 @@
     updateFlip();
   }
 
+  // ถ้ายังไม่มีรูป -> กล่องอัปโหลด, ถ้ามีแล้ว -> พรีวิวจิ๋ว + ปุ่มดูรูปเต็ม
   function pageTpl(i,p,isLast){
+    const bodyContent = p.img
+      ? `<div class="previewWrap">
+           <div class="preview" onclick="openFull(${i})" role="button" aria-label="ดูรูปเต็ม">
+             <img src="${p.img}" alt="">
+             <div class="hint">แตะเพื่อดูรูปเต็ม</div>
+           </div>
+         </div>`
+      : `<div class="photo" onclick="triggerUpload(${i})">
+           <span class="tiny">คลิกเพื่ออัปโหลดรูป</span>
+         </div>`;
+
     return `<article class="page ${i<currentPage?'flipped':''}" data-i="${i}" style="z-index:${100-i}">
       <div class="header">
         <div class="row">
@@ -315,9 +360,7 @@
         </div>
       </div>
       <div class="body">
-        <div class="photo" onclick="triggerUpload(${i})">
-          ${p.img?`<img src="${p.img}">`:`<span class="tiny">คลิกเพื่ออัปโหลดรูป</span>`}
-        </div>
+        ${bodyContent}
         <div class="metaLine">
           <span>📍 <em class="editable" contenteditable="true" oninput="editPlace(${i},this.innerText)">${p.place||''}</em></span>
           <span>🕒 <em class="editable" contenteditable="true" oninput="editTime(${i},this.innerText)">${p.time||''}</em></span>
@@ -381,7 +424,7 @@
     });
   };
 
-  // upload
+  // upload (only when no image yet)
   let uploadIndex=0;
   window.triggerUpload=(i)=>{ uploadIndex=i; document.getElementById('uploader').click(); };
   function handleUpload(e){
@@ -390,6 +433,18 @@
     r.onload=()=>{ CURRENT_ALBUM.pages[uploadIndex].img=r.result; persist(); renderPages(); updateFlip(); };
     r.readAsDataURL(f);
   }
+
+  // full image popup
+  const imgBackdrop=document.getElementById('imgBackdrop');
+  const fullImg=document.getElementById('fullImg');
+  document.getElementById('imgClose').addEventListener('click', ()=> imgBackdrop.classList.remove('active'));
+  imgBackdrop.addEventListener('click', (ev)=>{ if(ev.target===imgBackdrop) imgBackdrop.classList.remove('active'); });
+  window.openFull=(i)=>{
+    const p = CURRENT_ALBUM.pages[i]; if(!p || !p.img) return;
+    fullImg.src = p.img;
+    imgBackdrop.classList.add('active');
+  };
+
   function persist(){ save(); }
 
   // self-tests (console)
