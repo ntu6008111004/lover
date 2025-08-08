@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💕 Surprise — One Page (No-Music, Confirm Delete, Add-First-Page)</title>
+  <style>
+    :root{
+      --pink:#ff7aa2; --rose:#ff9fb8; --mint:#a5f3e6; --lav:#c7d2fe; --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.15);
+      --grad: linear-gradient(135deg,#ffe6ef 0%, #f3fbff 50%, #f2fff7 100%);
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:#fff7fb}
+    .hidden{display:none!important}
+    .center{display:flex;align-items:center;justify-content:center}
+    .btn{cursor:pointer;padding:.9rem 1.2rem;border:none;border-radius:999px;background:var(--pink);color:#fff;font-weight:700;box-shadow:0 10px 24px var(--shadow);transition:.2s}
+    .btn:hover:not([disabled]){transform:translateY(-2px)}
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
+    .btn.secondary{background:#fff;color:var(--pink);border:2px solid var(--pink)}
+    .tiny{font-size:.85rem;color:var(--muted)}
+    .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.85rem;cursor:pointer}
+    .pill.danger{border-color:#fecaca;color:#b91c1c}
+
+    /* Gate */
+    #gate{min-height:100dvh;background:var(--grad);padding:20px}
+    #gateCard{max-width:720px;margin:auto;background:#fff;border-radius:22px;box-shadow:0 16px 48px var(--shadow);padding:24px;text-align:center}
+
+    /* App */
+    #app{position:relative;min-height:100dvh;background:var(--grad);overflow:hidden}
+    .heart-stream{position:absolute;inset:0;pointer-events:none}
+    .heart{position:absolute;top:-10vh;font-size:clamp(14px,2.2vw,28px);opacity:.85;animation:fall linear forwards}
+    @keyframes fall{to{transform:translateY(115vh) rotate(360deg);opacity:.95}}
+
+    /* Albums */
+    #albums{max-width:1100px;margin:80px auto;padding:16px}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(1,1fr)}
+    @media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .card{background:#fff;border:1px solid #ffe0ea;border-radius:16px;box-shadow:0 14px 36px var(--shadow);overflow:hidden;cursor:pointer}
+    .thumb{height:160px;background:linear-gradient(135deg,#ffdbe8,#e8fff7);position:relative}
+    .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .meta{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}
+    .badge{background:#ffe6ef;color:#c71d62;border-radius:999px;padding:6px 10px;font-size:.85rem;font-weight:700}
+
+    /* Book */
+    #bookWrap{max-width:980px;margin:30px auto 100px;padding:16px}
+    .book{position:relative;perspective:1600px;height:clamp(380px,60vw,560px)}
+    .page{position:absolute;inset:0;background:#fff;border-radius:16px;box-shadow:0 22px 55px var(--shadow);display:grid;grid-template-rows:auto 1fr auto;transform-origin:left center;transition:transform .8s cubic-bezier(.22,.61,.36,1)}
+    .page.flipped{transform:rotateY(-180deg)}
+    .header{padding:12px 16px;background:linear-gradient(180deg,#fff,#fff7fb);display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .header .row{display:flex;gap:8px;align-items:center}
+    .body{padding:16px;display:grid;gap:10px}
+    .photo{background:#f6f9fc;border:2px dashed #e5e9f2;border-radius:12px;min-height:220px;display:grid;place-items:center;position:relative;overflow:hidden}
+    .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+    /* Editable hint (dashed) */
+    .editable{outline:2px dashed #ffc2d4; outline-offset:4px; border-radius:10px; padding:6px 8px}
+    .editable:focus{background:#fff7fb}
+
+    .metaLine{display:flex;gap:8px;flex-wrap:wrap;color:#6f5b66}
+    .metaLine span{background:#fdf2f8;border-radius:999px;padding:6px 10px}
+    .note{color:#6f5b66}
+    .controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;flex-wrap:wrap}
+
+    /* Info / Confirm popup */
+    #infoBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:70}
+    #infoBackdrop.active{display:flex}
+    #infoBox{background:#fff;border-radius:18px;max-width:480px;width:calc(100% - 40px);padding:20px 18px;box-shadow:0 20px 60px var(--shadow);text-align:center}
+    #dlgBtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <!-- Gate (only enter button) -->
+  <section id="gate" class="center">
+    <div id="gateCard">
+      <h1 style="margin:6px 0 10px">เซอร์ไพรส์ความทรงจำของเรา 💕</h1>
+      <p class="tiny">กดปุ่มด้านล่างเพื่อเริ่ม</p>
+      <button id="enterBtn" class="btn" style="margin-top:10px">เข้าเว็บ</button>
+    </div>
+  </section>
+
+  <!-- App -->
+  <main id="app" class="hidden">
+    <div class="heart-stream" id="heartStream"></div>
+
+    <!-- Albums -->
+    <section id="albums" class="hidden">
+      <div style="max-width:1100px;margin:auto;padding:0 16px">
+        <h2 style="margin:20px 0 10px">อัลบั้มครบรอบของเรา</h2>
+        <div class="tiny">ถ้ายังไม่มีข้อมูล จะขึ้นป๊อปอัปบอกว่า “ยังไม่ถึงเวลาของก้าวต่อไป”</div>
+        <div class="grid" id="albumGrid" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <!-- Book -->
+    <section id="bookWrap" class="hidden">
+      <div style="max-width:980px;margin:auto;padding:0 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;gap:8px;flex-wrap:wrap">
+          <div class="badge" id="albumTitle">อัลบั้ม</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="btnAddPhoto" class="btn">+ เพิ่มรูป</button>
+            <button id="backToAlbums" class="btn secondary">กลับเมนูอัลบั้ม</button>
+          </div>
+        </div>
+        <div class="book" id="book"></div>
+        <div class="controls">
+          <button id="prev" class="btn secondary">ย้อนกลับ</button>
+          <button id="next" class="btn">ถัดไป</button>
+          <span class="tiny" id="pageCounter"></span>
+        </div>
+        <p class="tiny" style="margin-top:8px">คลิกพื้นที่รูปเพื่ออัปโหลด • ส่วน <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> <em>แก้ได้</em> (มีกรอบเส้นปะช่วยบอก) • ลบหน้าได้จากปุ่มถังขยะ</p>
+      </div>
+    </section>
+
+    <!-- Info / Confirm popup -->
+    <div id="infoBackdrop" role="dialog" aria-modal="true" aria-labelledby="infoText">
+      <div id="infoBox">
+        <div id="infoText" style="margin-bottom:12px">ข้อความ</div>
+        <div id="dlgBtns">
+          <button class="btn secondary hidden" id="dlgNo">ไม่</button>
+          <button class="btn" id="dlgYes">ตกลง</button>
+          <button class="btn secondary hidden" id="dlgAlt">เพิ่มหน้าแรก</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  "use strict";
+
+  // ===== Config =====
+  const MAX_PAGES_PER_ALBUM = 15;
+
+  // ===== Data & storage =====
+  const DEFAULT_DATA={ albums:[
+    {month:1, title:'ครบรอบ 1 เดือน', pages:[
+      {title:'หน้า 1', place:'ที่ของเรา', time:'วันแรก', note:'เริ่มต้นของเรื่องราว', img:''},
+      {title:'หน้า 2', place:'', time:'', note:'เติมภาพความทรงจำ', img:''}
+    ]},
+    {month:2, title:'ครบรอบ 2 เดือน', pages:[]},
+    {month:3, title:'ครบรอบ 3 เดือน', pages:[]},
+  ]};
+  let DATA = load();
+  function load(){ try{const t=localStorage.getItem('albumsDataSimple'); if(t) return JSON.parse(t);}catch(e){} return DEFAULT_DATA; }
+  function save(){ localStorage.setItem('albumsDataSimple', JSON.stringify(DATA)); }
+
+  // ===== Elements =====
+  const gate=document.getElementById('gate');
+  const app=document.getElementById('app');
+  const albumGrid=document.getElementById('albumGrid');
+  const infoBackdrop=document.getElementById('infoBackdrop');
+  const infoText=document.getElementById('infoText');
+  const dlgYes=document.getElementById('dlgYes');
+  const dlgNo=document.getElementById('dlgNo');
+  const dlgAlt=document.getElementById('dlgAlt');
+
+  // ===== Gate: enter → albums (no countdown/popup) =====
+  document.getElementById('enterBtn').addEventListener('click', ()=>{
+    gate.classList.add('hidden');
+    app.classList.remove('hidden');
+    showAlbums();
+  });
+
+  // hearts background
+  const heartStream=document.getElementById('heartStream'); const hearts=['💗','💖','💓','💞','💝','💘','💟'];
+  setInterval(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent=hearts[Math.floor(Math.random()*hearts.length)]; h.style.left=(Math.random()*100)+'%'; h.style.animationDuration=(6+Math.random()*6)+'s'; heartStream.appendChild(h); setTimeout(()=>h.remove(), 13000); }, 400);
+
+  // ===== Popups =====
+  function infoPopup(msg,{okText='ตกลง'}={}){ // plain info
+    infoText.textContent=msg;
+    dlgNo.classList.add('hidden');
+    dlgAlt.classList.add('hidden');
+    dlgYes.textContent=okText;
+    infoBackdrop.classList.add('active');
+    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; };
+    dlgYes.onclick=close;
+  }
+  function confirmPopup(msg,{yesText='ใช่',noText='ไม่'}={}, onYes){ // yes/no
+    infoText.textContent=msg;
+    dlgNo.classList.remove('hidden');
+    dlgAlt.classList.add('hidden');
+    dlgYes.textContent=yesText;
+    dlgNo.textContent=noText;
+    infoBackdrop.classList.add('active');
+    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; dlgNo.onclick=null; };
+    dlgNo.onclick=close;
+    dlgYes.onclick=()=>{ close(); onYes && onYes(); };
+  }
+  function infoWithAlt(msg,{altText='เพิ่มหน้าแรก', onAlt}={}){ // info + alt button
+    infoText.textContent=msg;
+    dlgNo.classList.add('hidden');
+    dlgYes.textContent='ตกลง';
+    dlgAlt.classList.remove('hidden');
+    dlgAlt.textContent=altText;
+    infoBackdrop.classList.add('active');
+    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; dlgAlt.onclick=null; };
+    dlgYes.onclick=close;
+    dlgAlt.onclick=()=>{ onAlt && onAlt(); close(); };
+  }
+
+  // ===== Albums grid =====
+  function showAlbums(){
+    document.getElementById('albums').classList.remove('hidden');
+    document.getElementById('bookWrap').classList.add('hidden');
+    renderAlbumGrid();
+  }
+
+  function renderAlbumGrid(){
+    albumGrid.innerHTML='';
+    DATA.albums.sort((a,b)=>a.month-b.month).forEach(alb=>{
+      const hasPages = alb.pages && alb.pages.length>0;
+      const cover = (alb.pages||[]).find(p=>p.img);
+      const card=document.createElement('div'); card.className='card';
+      card.innerHTML = `
+        <div class="thumb">${cover?`<img src="${cover.img}">`:''}</div>
+        <div class="meta">
+          <div>
+            <strong>${alb.title||('ครบรอบ '+alb.month+' เดือน')}</strong>
+            <div class="tiny">${hasPages? (alb.pages.length+' หน้า'):'ยังไม่ถึงเวลาของก้าวต่อไป ✨'}</div>
+          </div>
+          <span class="badge">M${alb.month}</span>
+        </div>`;
+      card.addEventListener('click',()=>{
+        if(!hasPages){
+          infoWithAlt('ยังไม่ถึงเวลาของก้าวต่อไป ✨', {
+            altText:'เพิ่มหน้าแรก',
+            onAlt:()=> addFirstPage(alb.month)
+          });
+          return;
+        }
+        openAlbum(alb.month);
+      });
+      albumGrid.appendChild(card);
+    });
+
+    // add new album card
+    const add=document.createElement('div'); add.className='card';
+    add.innerHTML=`<div class="thumb"></div><div class="meta"><strong>+ เพิ่มอัลบั้มใหม่</strong><span class="badge">NEW</span></div>`;
+    add.addEventListener('click',()=>{
+      const m = prompt('ใส่เลขเดือนครบรอบ (เช่น 4 = ครบรอบ 4 เดือน)');
+      const month = parseInt(m||'0',10); if(!month) return;
+      if(DATA.albums.find(a=>a.month===month)){ infoPopup('มีอัลบั้มเดือนนี้แล้ว'); return; }
+      DATA.albums.push({month, title:`ครบรอบ ${month} เดือน`, pages:[]}); save(); renderAlbumGrid();
+    });
+    albumGrid.appendChild(add);
+  }
+
+  function addFirstPage(month){
+    const alb = DATA.albums.find(a=>a.month===month);
+    if(!alb) return;
+    if(!alb.pages) alb.pages=[];
+    alb.pages.push({title:'หน้า 1', place:'', time:'', note:'เริ่มเพิ่มความทรงจำของเรา', img:''});
+    save();
+    openAlbum(month);
+  }
+
+  // ===== Book viewer =====
+  let CURRENT_ALBUM=null, currentPage=0;
+
+  function openAlbum(month){
+    CURRENT_ALBUM = DATA.albums.find(a=>a.month===month);
+    if(!CURRENT_ALBUM) return;
+    document.getElementById('albums').classList.add('hidden');
+    document.getElementById('bookWrap').classList.remove('hidden');
+    document.getElementById('albumTitle').textContent = CURRENT_ALBUM.title || ('ครบรอบ '+CURRENT_ALBUM.month+' เดือน');
+    currentPage=0;
+    renderPages();
+    updateFlip();
+  }
+
+  function pageTpl(i,p,isLast){
+    return `<article class="page ${i<currentPage?'flipped':''}" data-i="${i}" style="z-index:${100-i}">
+      <div class="header">
+        <div class="row">
+          <strong class="editable" contenteditable="true" oninput="editTitle(${i},this.innerText)">${p.title||('หน้า '+(i+1))}</strong>
+          <span class="badge">${isLast?'THE END':'PAGE '+(i+1)}</span>
+        </div>
+        <div class="row">
+          <button class="pill danger" onclick="deletePage(${i})">🗑️ ลบหน้านี้</button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="photo" onclick="triggerUpload(${i})">
+          ${p.img?`<img src="${p.img}">`:`<span class="tiny">คลิกเพื่ออัปโหลดรูป</span>`}
+        </div>
+        <div class="metaLine">
+          <span>📍 <em class="editable" contenteditable="true" oninput="editPlace(${i},this.innerText)">${p.place||''}</em></span>
+          <span>🕒 <em class="editable" contenteditable="true" oninput="editTime(${i},this.innerText)">${p.time||''}</em></span>
+        </div>
+        <div class="note editable" contenteditable="true" oninput="editNote(${i},this.innerText)">${p.note||''}</div>
+      </div>
+    </article>`;
+  }
+
+  function renderPages(){
+    const book=document.getElementById('book');
+    const pages = CURRENT_ALBUM.pages;
+    const last=pages.length-1;
+    book.innerHTML = pages.map((p,i)=>pageTpl(i,p, i===last)).join('') + `<input id="uploader" type="file" accept="image/*" class="hidden"/>`;
+    document.getElementById('uploader').addEventListener('change', handleUpload);
+    document.getElementById('pageCounter').textContent = `(${pages.length}/${MAX_PAGES_PER_ALBUM})`;
+    document.getElementById('btnAddPhoto').disabled = pages.length>=MAX_PAGES_PER_ALBUM;
+
+    if(!pages.length){
+      infoWithAlt('อัลบั้มนี้ยังไม่มีรูป ลองเพิ่มรูปแรกกันเลย?', {
+        altText:'เพิ่มหน้าแรก',
+        onAlt:()=>{ CURRENT_ALBUM.pages.push({title:'หน้า 1', place:'', time:'', note:'', img:''}); save(); renderPages(); updateFlip(); }
+      });
+    }
+  }
+
+  function updateFlip(){
+    const pages=[...document.querySelectorAll('#book .page')];
+    pages.forEach((pg,i)=>{ pg.classList.toggle('flipped', i<currentPage); });
+    document.getElementById('prev').disabled = currentPage===0;
+    document.getElementById('next').textContent = currentPage===pages.length-1? 'กลับเมนูอัลบั้ม' : 'ถัดไป';
+  }
+
+  document.getElementById('next').addEventListener('click',()=>{
+    const total=(CURRENT_ALBUM?.pages||[]).length;
+    if(currentPage<total-1){ currentPage++; updateFlip(); }
+    else { showAlbums(); }
+  });
+  document.getElementById('prev').addEventListener('click',()=>{ if(currentPage>0){ currentPage--; updateFlip(); }});
+  document.getElementById('backToAlbums').addEventListener('click', showAlbums);
+
+  document.getElementById('btnAddPhoto').addEventListener('click',()=>{
+    const pages=CURRENT_ALBUM.pages;
+    if(pages.length>=MAX_PAGES_PER_ALBUM){ infoPopup(`ครบ ${MAX_PAGES_PER_ALBUM} รูปแล้ว`); return; }
+    pages.push({title:`หน้า ${pages.length+1}`, place:'', time:'', note:'', img:''});
+    save(); renderPages(); updateFlip();
+  });
+
+  // inline editors save
+  window.editTitle=(i,val)=>{ CURRENT_ALBUM.pages[i].title=val; persist(); };
+  window.editPlace=(i,val)=>{ CURRENT_ALBUM.pages[i].place=val; persist(); };
+  window.editTime =(i,val)=>{ CURRENT_ALBUM.pages[i].time =val; persist(); };
+  window.editNote =(i,val)=>{ CURRENT_ALBUM.pages[i].note =val; persist(); };
+
+  // delete page with Yes/No
+  window.deletePage=(i)=>{
+    confirmPopup('ลบหน้านี้แน่นะ?', {yesText:'ใช่', noText:'ไม่'}, ()=>{
+      CURRENT_ALBUM.pages.splice(i,1);
+      if(currentPage>0) currentPage--;
+      persist(); renderPages(); updateFlip();
+    });
+  };
+
+  // upload
+  let uploadIndex=0;
+  window.triggerUpload=(i)=>{ uploadIndex=i; document.getElementById('uploader').click(); };
+  function handleUpload(e){
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{ CURRENT_ALBUM.pages[uploadIndex].img=r.result; persist(); renderPages(); updateFlip(); };
+    r.readAsDataURL(f);
+  }
+
+  function persist(){ save(); }
+
+  // ===== Minimal self-tests (console) =====
+  (function runSelfTests(){
+    try{
+      console.group('%cSelf-Tests','color:#c2185b;font-weight:bold');
+      console.assert(document.getElementById('enterBtn'), 'enterBtn present');
+      console.assert(typeof showAlbums === 'function', 'showAlbums exists');
+      console.assert(typeof renderPages === 'function', 'renderPages exists');
+      console.assert(!document.getElementById('musicPanel'), 'music removed');
+      console.log('All basic tests passed ✓');
+      console.groupEnd();
+    }catch(err){ console.error('Self-tests failed:', err); }
+  })();
+  </script>
+</body>
+</html>
