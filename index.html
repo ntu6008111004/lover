@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>💕 Surprise — One Page (No-Music, Confirm Delete, Add-First-Page)</title>
+  <title>💕 Surprise — One Page (Love Gate, No-Music)</title>
   <style>
     :root{
       --pink:#ff7aa2; --rose:#ff9fb8; --mint:#a5f3e6; --lav:#c7d2fe; --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.15);
       --grad: linear-gradient(135deg,#ffe6ef 0%, #f3fbff 50%, #f2fff7 100%);
-      --danger:#ef4444;
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:#fff7fb}
@@ -24,7 +23,8 @@
 
     /* Gate */
     #gate{min-height:100dvh;background:var(--grad);padding:20px}
-    #gateCard{max-width:720px;margin:auto;background:#fff;border-radius:22px;box-shadow:0 16px 48px var(--shadow);padding:24px;text-align:center}
+    #gateCard{max-width:720px;margin:auto;background:#fff;border-radius:22px;box-shadow:0 16px 48px var(--shadow);padding:28px 24px;text-align:center}
+    #noMsg{margin-top:12px; padding:10px 12px; border:2px dashed #ffc2d4; border-radius:12px; background:#fff7fb; display:none}
 
     /* App */
     #app{position:relative;min-height:100dvh;background:var(--grad);overflow:hidden}
@@ -38,8 +38,8 @@
     @media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
     @media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
     .card{background:#fff;border:1px solid #ffe0ea;border-radius:16px;box-shadow:0 14px 36px var(--shadow);overflow:hidden;cursor:pointer}
-    .thumb{height:160px;background:linear-gradient(135deg,#ffdbe8,#e8fff7);position:relative}
-    .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .thumb{height:200px;background:linear-gradient(135deg,#ffdbe8,#e8fff7);position:relative}
+    .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
     .meta{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}
     .badge{background:#ffe6ef;color:#c71d62;border-radius:999px;padding:6px 10px;font-size:.85rem;font-weight:700}
 
@@ -51,19 +51,20 @@
     .header{padding:12px 16px;background:linear-gradient(180deg,#fff,#fff7fb);display:flex;justify-content:space-between;align-items:center;gap:8px}
     .header .row{display:flex;gap:8px;align-items:center}
     .body{padding:16px;display:grid;gap:10px}
-    .photo{background:#f6f9fc;border:2px dashed #e5e9f2;border-radius:12px;min-height:220px;display:grid;place-items:center;position:relative;overflow:hidden}
-    .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-
-    /* Editable hint (dashed) */
+    .photo{
+      background:#f6f9fc;border:2px dashed #e5e9f2;border-radius:12px;
+      display:grid;place-items:center;position:relative;overflow:hidden;
+      aspect-ratio:16/9; /* ให้เสถียรทุกจอ */
+    }
+    .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
     .editable{outline:2px dashed #ffc2d4; outline-offset:4px; border-radius:10px; padding:6px 8px}
     .editable:focus{background:#fff7fb}
-
     .metaLine{display:flex;gap:8px;flex-wrap:wrap;color:#6f5b66}
     .metaLine span{background:#fdf2f8;border-radius:999px;padding:6px 10px}
     .note{color:#6f5b66}
     .controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;flex-wrap:wrap}
 
-    /* Info / Confirm popup */
+    /* Popup */
     #infoBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:70}
     #infoBackdrop.active{display:flex}
     #infoBox{background:#fff;border-radius:18px;max-width:480px;width:calc(100% - 40px);padding:20px 18px;box-shadow:0 20px 60px var(--shadow);text-align:center}
@@ -71,12 +72,15 @@
   </style>
 </head>
 <body>
-  <!-- Gate (only enter button) -->
+  <!-- Gate: Love question -->
   <section id="gate" class="center">
     <div id="gateCard">
-      <h1 style="margin:6px 0 10px">เซอร์ไพรส์ความทรงจำของเรา 💕</h1>
-      <p class="tiny">กดปุ่มด้านล่างเพื่อเริ่ม</p>
-      <button id="enterBtn" class="btn" style="margin-top:10px">เข้าเว็บ</button>
+      <h1 style="margin:0 0 8px">เธอรักเราไหม 💕</h1>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+        <button id="btnYes" class="btn">Yes</button>
+        <button id="btnNo" class="btn secondary">No</button>
+      </div>
+      <div id="noMsg" class="tiny"></div>
     </div>
   </section>
 
@@ -88,7 +92,7 @@
     <section id="albums" class="hidden">
       <div style="max-width:1100px;margin:auto;padding:0 16px">
         <h2 style="margin:20px 0 10px">อัลบั้มครบรอบของเรา</h2>
-        <div class="tiny">ถ้ายังไม่มีข้อมูล จะขึ้นป๊อปอัปบอกว่า “ยังไม่ถึงเวลาของก้าวต่อไป”</div>
+        <div class="tiny">ถ้ายังไม่มีข้อมูล จะขึ้นป๊อปอัปบอกว่า “ยังไม่ถึงเวลาของก้าวต่อไป” พร้อมปุ่ม “เพิ่มหน้าแรก”</div>
         <div class="grid" id="albumGrid" style="margin-top:14px"></div>
       </div>
     </section>
@@ -109,11 +113,13 @@
           <button id="next" class="btn">ถัดไป</button>
           <span class="tiny" id="pageCounter"></span>
         </div>
-        <p class="tiny" style="margin-top:8px">คลิกพื้นที่รูปเพื่ออัปโหลด • ส่วน <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> <em>แก้ได้</em> (มีกรอบเส้นปะช่วยบอก) • ลบหน้าได้จากปุ่มถังขยะ</p>
+        <p class="tiny" style="margin-top:8px">
+          คลิกพื้นที่รูปเพื่ออัปโหลด • ส่วน <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> <em>แก้ได้</em> (มีกรอบเส้นปะช่วยบอก) • ลบหน้าได้จากปุ่มถังขยะ
+        </p>
       </div>
     </section>
 
-    <!-- Info / Confirm popup -->
+    <!-- Popup -->
     <div id="infoBackdrop" role="dialog" aria-modal="true" aria-labelledby="infoText">
       <div id="infoBox">
         <div id="infoText" style="margin-bottom:12px">ข้อความ</div>
@@ -129,10 +135,8 @@
   <script>
   "use strict";
 
-  // ===== Config =====
+  /* ---------- Data ---------- */
   const MAX_PAGES_PER_ALBUM = 15;
-
-  // ===== Data & storage =====
   const DEFAULT_DATA={ albums:[
     {month:1, title:'ครบรอบ 1 เดือน', pages:[
       {title:'หน้า 1', place:'ที่ของเรา', time:'วันแรก', note:'เริ่มต้นของเรื่องราว', img:''},
@@ -145,29 +149,58 @@
   function load(){ try{const t=localStorage.getItem('albumsDataSimple'); if(t) return JSON.parse(t);}catch(e){} return DEFAULT_DATA; }
   function save(){ localStorage.setItem('albumsDataSimple', JSON.stringify(DATA)); }
 
-  // ===== Elements =====
-  const gate=document.getElementById('gate');
-  const app=document.getElementById('app');
-  const albumGrid=document.getElementById('albumGrid');
+  /* ---------- Gate (Yes/No) ---------- */
+  const gate = document.getElementById('gate');
+  const app  = document.getElementById('app');
+  const btnYes = document.getElementById('btnYes');
+  const btnNo  = document.getElementById('btnNo');
+  const noMsg  = document.getElementById('noMsg');
+
+  btnYes.addEventListener('click', ()=>{
+    // ไปหน้าอัลบั้มทันที
+    gate.classList.add('hidden');
+    app.classList.remove('hidden');
+    showAlbums();
+  });
+
+  btnNo.addEventListener('click', ()=>{
+    // แสดงข้อความ + นับถอยหลัง 5 วิ และ disable ปุ่ม
+    let left = 5;
+    btnYes.disabled = btnNo.disabled = true;
+    noMsg.style.display = 'block';
+    noMsg.innerHTML = `ไม่อนุญาติให้ไม่รัก ต้องรักเท่านั้น ชิ!! 😝🤪 <br/>ปิดใน <strong id="count">5</strong> วิ`;
+    const c = document.getElementById('count');
+    const t = setInterval(()=>{
+      left--; c.textContent = String(left);
+      if(left<=0){
+        clearInterval(t);
+        noMsg.style.display = 'none';
+        btnYes.disabled = btnNo.disabled = false;
+      }
+    },1000);
+  });
+
+  /* ---------- Hearts BG ---------- */
+  const heartStream=document.getElementById('heartStream');
+  const hearts=['💗','💖','💓','💞','💝','💘','💟'];
+  setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='heart';
+    h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left=(Math.random()*100)+'%';
+    h.style.animationDuration=(6+Math.random()*6)+'s';
+    heartStream.appendChild(h);
+    setTimeout(()=>h.remove(), 13000);
+  }, 400);
+
+  /* ---------- Popup helpers ---------- */
   const infoBackdrop=document.getElementById('infoBackdrop');
   const infoText=document.getElementById('infoText');
   const dlgYes=document.getElementById('dlgYes');
   const dlgNo=document.getElementById('dlgNo');
   const dlgAlt=document.getElementById('dlgAlt');
 
-  // ===== Gate: enter → albums (no countdown/popup) =====
-  document.getElementById('enterBtn').addEventListener('click', ()=>{
-    gate.classList.add('hidden');
-    app.classList.remove('hidden');
-    showAlbums();
-  });
-
-  // hearts background
-  const heartStream=document.getElementById('heartStream'); const hearts=['💗','💖','💓','💞','💝','💘','💟'];
-  setInterval(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent=hearts[Math.floor(Math.random()*hearts.length)]; h.style.left=(Math.random()*100)+'%'; h.style.animationDuration=(6+Math.random()*6)+'s'; heartStream.appendChild(h); setTimeout(()=>h.remove(), 13000); }, 400);
-
-  // ===== Popups =====
-  function infoPopup(msg,{okText='ตกลง'}={}){ // plain info
+  function infoPopup(msg,{okText='ตกลง'}={}){ // info only
     infoText.textContent=msg;
     dlgNo.classList.add('hidden');
     dlgAlt.classList.add('hidden');
@@ -176,7 +209,7 @@
     const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; };
     dlgYes.onclick=close;
   }
-  function confirmPopup(msg,{yesText='ใช่',noText='ไม่'}={}, onYes){ // yes/no
+  function confirmPopup(msg,{yesText='ใช่',noText='ไม่'}={},onYes){ // yes/no
     infoText.textContent=msg;
     dlgNo.classList.remove('hidden');
     dlgAlt.classList.add('hidden');
@@ -199,7 +232,8 @@
     dlgAlt.onclick=()=>{ onAlt && onAlt(); close(); };
   }
 
-  // ===== Albums grid =====
+  /* ---------- Albums Grid ---------- */
+  const albumGrid=document.getElementById('albumGrid');
   function showAlbums(){
     document.getElementById('albums').classList.remove('hidden');
     document.getElementById('bookWrap').classList.add('hidden');
@@ -255,7 +289,7 @@
     openAlbum(month);
   }
 
-  // ===== Book viewer =====
+  /* ---------- Book Viewer ---------- */
   let CURRENT_ALBUM=null, currentPage=0;
 
   function openAlbum(month){
@@ -338,7 +372,7 @@
   window.editTime =(i,val)=>{ CURRENT_ALBUM.pages[i].time =val; persist(); };
   window.editNote =(i,val)=>{ CURRENT_ALBUM.pages[i].note =val; persist(); };
 
-  // delete page with Yes/No
+  // delete page (Yes/No)
   window.deletePage=(i)=>{
     confirmPopup('ลบหน้านี้แน่นะ?', {yesText:'ใช่', noText:'ไม่'}, ()=>{
       CURRENT_ALBUM.pages.splice(i,1);
@@ -356,20 +390,18 @@
     r.onload=()=>{ CURRENT_ALBUM.pages[uploadIndex].img=r.result; persist(); renderPages(); updateFlip(); };
     r.readAsDataURL(f);
   }
-
   function persist(){ save(); }
 
-  // ===== Minimal self-tests (console) =====
-  (function runSelfTests(){
+  // self-tests (console)
+  (function(){
     try{
       console.group('%cSelf-Tests','color:#c2185b;font-weight:bold');
-      console.assert(document.getElementById('enterBtn'), 'enterBtn present');
+      console.assert(document.getElementById('btnYes') && document.getElementById('btnNo'), 'Love Gate buttons present');
       console.assert(typeof showAlbums === 'function', 'showAlbums exists');
       console.assert(typeof renderPages === 'function', 'renderPages exists');
-      console.assert(!document.getElementById('musicPanel'), 'music removed');
       console.log('All basic tests passed ✓');
       console.groupEnd();
-    }catch(err){ console.error('Self-tests failed:', err); }
+    }catch(e){ console.error('Self-tests failed', e); }
   })();
   </script>
 </body>
