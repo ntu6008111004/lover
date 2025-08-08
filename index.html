@@ -4,13 +4,22 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>คุณรักเราไหม 💕 → M1 Memory</title>
+
+<!-- ฟอนต์ไทยน่ารัก -->
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;400;600;700&family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --pink1:#ffe6ef; --pink3:#fbeafe;
     --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.16); --card:#ffffff;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:linear-gradient(135deg,var(--pink1),var(--pink3))}
+  html,body{
+    height:100%;margin:0;
+    font-family:"Kanit","Inter","Noto Sans Thai",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    color:var(--text);background:linear-gradient(135deg,var(--pink1),var(--pink3))
+  }
   .hidden{display:none!important}
   .center{display:flex;align-items:center;justify-content:center}
   .btn{cursor:pointer;padding:.9rem 1.2rem;border:none;border-radius:999px;background:#ff7aa2;color:#fff;font-weight:700;box-shadow:0 10px 24px var(--shadow);transition:.2s}
@@ -18,6 +27,9 @@
   .btn.secondary{background:#fff;color:#ff7aa2;border:2px solid #ff7aa2}
   .tiny{font-size:.95rem;color:var(--muted)}
   .badge{display:inline-block;background:#ffe6ef;color:#c2185b;border-radius:999px;padding:6px 12px;font-weight:700}
+  h1.title,#gateCard h1,.badge,.btn,.cap-title,#fxText{
+    font-family:"Mali","Kanit","Noto Sans Thai",sans-serif; letter-spacing:.2px;
+  }
 
   /* Gate */
   #gate{min-height:100dvh;position:relative;overflow:hidden;padding:20px}
@@ -73,22 +85,18 @@
   #fxCanvas{width:100vw;height:100vh;display:block}
   #fxText{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-weight:900; letter-spacing:.5px; text-align:center; line-height:1.2;
+    font-weight:700; letter-spacing:.5px; text-align:center; line-height:1.2;
     font-size:clamp(28px,5vw,56px); color:#ffffff; text-shadow:0 2px 10px rgba(0,0,0,.45);
-    animation:fxTextIn .6s ease-out both;
+    animation:fxTextIn .6s ease-out both; font-family:"Mali","Kanit","Noto Sans Thai",sans-serif;
   }
-  @keyframes fxTextIn{
-    0%{transform:translateY(14px); opacity:0}
-    100%{transform:translateY(0); opacity:1}
-  }
+  @keyframes fxTextIn{ 0%{transform:translateY(14px); opacity:0} 100%{transform:translateY(0); opacity:1} }
 
-  /* Music */
+  /* Music panel */
   #musicBtn{position:fixed;left:14px;bottom:14px;z-index:80}
   #musicPanel{position:fixed;left:14px;bottom:68px;z-index:80;width:min(360px,calc(100% - 28px));background:#fff;border:1px solid #ffd6e6;border-radius:14px;box-shadow:0 16px 40px var(--shadow);padding:12px;display:none}
   #musicPanel.active{display:block}
   .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.95rem;cursor:pointer}
 </style>
-<script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -112,7 +120,7 @@
 <!-- Fireworks Overlay -->
 <div id="fxBackdrop">
   <canvas id="fxCanvas"></canvas>
-  <div id="fxText" class="hidden">Welcome to memory love Y&amp;I</div>
+  <div id="fxText">Welcome to memory love Y&amp;I</div>
 </div>
 
 <!-- Main -->
@@ -134,20 +142,18 @@
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button id="btnPlay" class="pill">▶️ เล่น</button>
       <button id="btnPause" class="pill">⏸️ หยุด</button>
-      <button id="btnPrev" class="pill">⏮️</button>
-      <button id="btnNext" class="pill">⏭️</button>
       <button id="btnLoop" class="pill">🔁 วน</button>
       <button id="btnUnmute" class="pill">🔊 ปลดปิดเสียง</button>
     </div>
   </div>
-  <div class="tiny" style="margin-top:6px">* ถ้าฟังไม่ดัง ให้กด “ปลดปิดเสียง” หนึ่งครั้ง</div>
-</div>
-<div style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden">
-  <div id="ytplayer"></div>
+  <div class="tiny" style="margin-top:6px">* ถ้าไม่ดัง ให้กด “ปลดปิดเสียง” หนึ่งครั้ง</div>
 </div>
 
 <script>
-/* ============== DATA: ใส่ลิงก์ raw GitHub ของคุณ ============== */
+/* ============== CONFIG / DATA ============== */
+const MUSIC_SRC = 'cuteJp.mp3'; // ← ใส่พาธไฟล์ MP3 ของคุณ (เช่น ./audio/cuteJp.mp3)
+
+/* สไลด์ 10 รูป: ใส่ลิงก์ raw GitHub ของคุณ */
 const SLIDES = [
   { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide01.jpg', place:'สถานที่ 1', date:'01 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 1'},
   { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide02.jpg', place:'สถานที่ 2', date:'02 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 2'},
@@ -170,6 +176,7 @@ const noBtn = document.getElementById('noBtn');
 const cdBackdrop = document.getElementById('cdBackdrop');
 const cdLine = document.getElementById('cdLine');
 
+/* NO → ป๊อปอัปนับ 5 วิ แล้วปิด */
 noBtn.addEventListener('click', ()=>{
   cdLine.innerHTML = 'ไม่อนุญาติให่ไม่รักหรอกนะ 😒🙄😤 จะปิดใน <strong id="cdNum">5</strong> วิ';
   cdBackdrop.classList.add('active');
@@ -177,8 +184,8 @@ noBtn.addEventListener('click', ()=>{
   const timer=setInterval(()=>{ t--; n().textContent=t; if(t<=0){ clearInterval(timer); cdBackdrop.classList.remove('active'); } },1000);
 });
 
+/* YES → นับ 5 วิ → เข้า main → พลุ (4 วิ) + เบลอ → สไลด์ + unmute เพลง */
 yesBtn.addEventListener('click', ()=>{
-  // นับถอยหลัง 5 วิ พร้อมข้อความ
   cdLine.innerHTML = 'กำลังพาคุณหวานใจไปสู่ความทรงจำอันหวานชื่น… ใน <strong id="cdNum">5</strong> วิ';
   cdBackdrop.classList.add('active');
   let t=5; const n=()=>document.getElementById('cdNum');
@@ -188,11 +195,11 @@ yesBtn.addEventListener('click', ()=>{
       clearInterval(timer);
       cdBackdrop.classList.remove('active');
 
-      // เข้าหน้า main + พลุ + เบลอพื้นหลัง + ปลดปิดเสียงเพลง
       gate.classList.add('hidden');
       main.classList.remove('hidden');
       hero.classList.add('blurred');
-      try{ ytPlayer.unMute(); }catch(e){}
+
+      unmuteMusic(); // เปิดเสียงเพลงหลัง Yes
       startFireworks(4000, ()=>{
         hero.classList.remove('blurred');
         startSlides();
@@ -262,7 +269,7 @@ function spawnTransitionHearts(){
   }
 }
 
-/* ===== Fireworks (bolder to center + text) ===== */
+/* ===== Fireworks (center + text) ===== */
 const fxBackdrop=document.getElementById('fxBackdrop');
 const fxCanvas=document.getElementById('fxCanvas');
 const fxText=document.getElementById('fxText');
@@ -274,7 +281,7 @@ window.addEventListener('resize', resizeCanvas);
 
 function startFireworks(duration=4000, onDone=()=>{}){
   resizeCanvas();
-  fxText.classList.remove('hidden');
+  fxText.style.display='flex';
   fxBackdrop.classList.add('active');
   fwParticles=[];
   const start=performance.now();
@@ -282,20 +289,19 @@ function startFireworks(duration=4000, onDone=()=>{}){
   function spawnRocket(){
     const x = Math.random()*fxCanvas.width*0.8 + fxCanvas.width*0.1;
     const y = fxCanvas.height + 20;
-    const targetY = fxCanvas.height*0.45 + (Math.random()*40-20); // 🎯 ใกล้กึ่งกลางจอ
+    const targetY = fxCanvas.height*0.45 + (Math.random()*40-20);
     const vy = - (8 + Math.random()*3);
     const vx = (Math.random()-.5)*1.2;
     fwParticles.push({type:'rocket',x,y,vx,vy,targetY,color:randColor(),life:700});
   }
   function explode(x,y,color){
-    const count = 120; // เยอะขึ้น ชัดขึ้น
+    const count = 120;
     for(let i=0;i<count;i++){
       const angle = Math.random()*Math.PI*2;
       const speed = 2.5+Math.random()*3.5;
       const size = 1.5+Math.random()*2.2;
       fwParticles.push({type:'spark',x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,alpha:1,color,life:700,size});
     }
-    // เพิ่มแฉกแสงกลางจอ
     for(let i=0;i<10;i++){
       fwParticles.push({type:'ray',x,y,dir:i,alpha:1,color,life:500});
     }
@@ -314,7 +320,6 @@ function startFireworks(duration=4000, onDone=()=>{}){
     fwParticles.forEach(p=>{
       if(p.type==='rocket'){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life-=16;
-        // ควัน/ไอพ่น
         ctx.fillStyle='rgba(255,255,255,.8)';
         ctx.fillRect(p.x, p.y, 2, 10);
         if(p.y <= p.targetY || p.life<=0){ p.life=-1; explode(p.x,p.y,p.color); }
@@ -342,103 +347,86 @@ function startFireworks(duration=4000, onDone=()=>{}){
     }else{
       cancelAnimationFrame(fwRaf);
       fxBackdrop.classList.remove('active');
-      fxText.classList.add('hidden');
+      fxText.style.display='none';
       onDone();
     }
   }
   fwRaf = requestAnimationFrame(tick);
 }
 
-/* ===== Music (YouTube) — autoplay BEFORE gate (muted), unmute after YES ===== */
-const musicBtn=document.getElementById('musicBtn');
-const musicPanel=document.getElementById('musicPanel');
-const btnPlay=document.getElementById('btnPlay');
-const btnPause=document.getElementById('btnPause');
-const btnPrev=document.getElementById('btnPrev');
-const btnNext=document.getElementById('btnNext');
-const btnLoop=document.getElementById('btnLoop');
-const btnUnmute=document.getElementById('btnUnmute');
+/* ===== Music (MP3) — autoplay (muted) + คุมเล่น/หยุดได้จริง ===== */
+const musicBtn = document.getElementById('musicBtn');
+const musicPanel = document.getElementById('musicPanel');
+const btnPlay = document.getElementById('btnPlay');
+const btnPause = document.getElementById('btnPause');
+const btnLoop = document.getElementById('btnLoop');
+const btnUnmute = document.getElementById('btnUnmute');
+musicBtn?.addEventListener('click', () => musicPanel.classList.toggle('active'));
 
-musicBtn.addEventListener('click', ()=> musicPanel.classList.toggle('active'));
+const bgMusic = new Audio(MUSIC_SRC);
+bgMusic.loop = true;
+bgMusic.volume = 1.0;
+bgMusic.muted = true; // เริ่ม mute เพื่อให้ autoplay ได้
+let autoRetryTimer = null;
+let autoRetryCount = 0;
+let autoLocked = false; // true หลังจากเล่นสำเร็จครั้งแรก เพื่อไม่ให้ไปแย่งตอน pause
 
-let ytPlayer, ytReady=false;
-const MUSIC={ urls:['https://youtu.be/0P6P115Wh8Y?list=PL1yLr3qFTpM_GMpbbjAeM4hNd6SbDqIXF'], index:0, loop:true };
-
-window.onYouTubeIframeAPIReady = function(){
-  ytReady = true;
-  const {vid, list} = parseYouTube(MUSIC.urls[MUSIC.index]);
-  initPlayer(vid, list);
-};
-
-function initPlayer(videoId, listId){
-  ytPlayer = new YT.Player('ytplayer', {
-    height:'0', width:'0',
-    videoId: videoId,
-    playerVars:{ playsinline:1, autoplay:1, mute:1, loop:1, playlist: listId || videoId },
-    events:{ 'onReady': onYtReady, 'onStateChange': onYtState }
-  });
+function tryAutoplayOnce(){
+  if (autoLocked) return; // ถ้าเคยเล่นสำเร็จแล้ว ไม่ต้องฝืนอีก
+  bgMusic.play().then(()=>{
+    autoLocked = true;       // เล่นสำเร็จแล้ว ล็อกไว้
+    stopAutoRetry();
+  }).catch(()=>{ /* เงียบไว้ */ });
 }
-function onYtReady(){
-  try{
-    ytPlayer.mute();      // บังคับปิดเสียง
-    ytPlayer.playVideo(); // เล่นทันที (autoplay allowed เมื่อ mute)
-  }catch(e){}
+function startAutoRetry(){
+  stopAutoRetry();
+  autoRetryCount = 0;
+  autoRetryTimer = setInterval(()=>{
+    if (autoLocked) { stopAutoRetry(); return; }
+    autoRetryCount++;
+    tryAutoplayOnce();
+    if (autoRetryCount > 15) stopAutoRetry();
+  }, 1200);
 }
-function loadAndPlay(force=false){
-  if(!ytReady) return;
-  const {vid, list}=parseYouTube(MUSIC.urls[MUSIC.index]);
-  if(!ytPlayer){ initPlayer(vid, list); return; }
-  if(list){ ytPlayer.loadPlaylist({list:list, index:0}); } else { ytPlayer.loadVideoById(vid); }
-  if(force){ try{ ytPlayer.playVideo(); }catch(e){} }
+function stopAutoRetry(){
+  if (autoRetryTimer){ clearInterval(autoRetryTimer); autoRetryTimer=null; }
 }
-function onYtState(e){
-  // ถ้าจบและไม่มี playlist ให้ลูปเดี่ยว
-  if(e.data===0 && !hasPlaylist(MUSIC.urls[MUSIC.index])){ try{ ytPlayer.playVideo(); }catch(e){} }
-}
-// Controls
-btnPlay.addEventListener('click', ()=> loadAndPlay(true));
-btnPause.addEventListener('click', ()=>{ try{ ytPlayer.pauseVideo(); }catch(e){} });
-btnPrev .addEventListener('click', ()=>{ MUSIC.index=(MUSIC.index-1+MUSIC.urls.length)%MUSIC.urls.length; loadAndPlay(true); });
-btnNext .addEventListener('click', ()=>{ MUSIC.index=(MUSIC.index+1)%MUSIC.urls.length; loadAndPlay(true); });
-btnLoop.addEventListener('click', ()=>{ MUSIC.loop=!MUSIC.loop; btnLoop.style.borderColor = MUSIC.loop? '#b6f0c8':'#ffd6e6'; });
-btnUnmute.addEventListener('click', ()=>{ try{ ytPlayer.unMute(); }catch(e){} });
 
-// fallback: คลิกใด ๆ บนหน้า = พยายามเล่น (กันเคสเบราว์เซอร์เข้มงวด)
-document.addEventListener('click', ()=> loadAndPlay(true), {once:true});
+// พยายาม autoplay ตอนโหลด และ gesture ครั้งแรกเท่านั้น
+document.addEventListener('DOMContentLoaded', tryAutoplayOnce);
+['click','touchstart','pointerdown','keydown'].forEach(evt=>{
+  document.addEventListener(evt, tryAutoplayOnce, {once:true, passive:true});
+});
+startAutoRetry();
 
-function hasPlaylist(url){ try{ const u=new URL(url); return !!u.searchParams.get('list'); }catch(e){ return false; } }
-function parseYouTube(url){
-  try{
-    const u=new URL(url);
-    const list=u.searchParams.get('list')||null;
-    let vid=u.searchParams.get('v')||null;
-    if(u.hostname.includes('youtu.be')) vid=u.pathname.replace('/','');
-    if(!vid && u.pathname.includes('/embed/')) vid=u.pathname.split('/embed/')[1];
-    if(!vid){ const m=url.match(/[?&]v=([^&#]+)/); if(m) vid=m[1]; }
-    return {vid, list};
-  }catch(e){
-    const m=url.match(/[?&]v=([^&#]+)/);
-    return {vid: m?m[1]:null, list:null};
-  }
-}
-</script>
+// ควบคุมปุ่ม — จะไม่โดน auto‑retry แย่งอีก เพราะ autoLocked=true หลังเล่นครั้งแรก
+btnPlay?.addEventListener('click', ()=>{ bgMusic.play().catch(()=>{}); });
+btnPause?.addEventListener('click', ()=>{
+  bgMusic.pause();
+  // ไม่เริ่ม retry เมื่อ pause ตั้งใจ
+});
+btnLoop ?.addEventListener('click', ()=>{ bgMusic.loop = !bgMusic.loop; btnLoop.style.borderColor = bgMusic.loop ? '#b6f0c8' : '#ffd6e6'; });
+btnUnmute?.addEventListener('click', ()=>{ bgMusic.muted = false; bgMusic.play().catch(()=>{}); });
 
-<!-- background hearts (extra gentle) -->
-<div class="heart-stream" id="heartBg" style="z-index:0"></div>
-<script>
-  (function(){
-    const stream=document.getElementById('heartBg');
-    const hearts=['💗','💖','💓','💞','💝','💘','💟'];
-    setInterval(()=>{
-      const h=document.createElement('div');
-      h.className='heart';
-      h.textContent=hearts[(Math.random()*hearts.length)|0];
-      h.style.left=(Math.random()*100)+'%';
-      h.style.animationDuration=(10+Math.random()*10)+'s';
-      stream.appendChild(h);
-      setTimeout(()=>h.remove(),20000);
-    },800);
-  })();
+// ฟังก์ชันเรียกตอนเข้า main หลัง YES
+function unmuteMusic(){ bgMusic.muted = false; bgMusic.play().catch(()=>{}); }
+
+/* ===== background hearts (gentle extra layer) ===== */
+(function(){
+  const bg = document.createElement('div');
+  bg.className='heart-stream';
+  document.body.appendChild(bg);
+  const hearts=['💗','💖','💓','💞','💝','💘','💟'];
+  setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='heart';
+    h.textContent=hearts[(Math.random()*hearts.length)|0];
+    h.style.left=(Math.random()*100)+'%';
+    h.style.animationDuration=(10+Math.random()*10)+'s';
+    bg.appendChild(h);
+    setTimeout(()=>h.remove(),20000);
+  },800);
+})();
 </script>
 </body>
 </html>
