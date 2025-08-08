@@ -1,220 +1,209 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>💕 Surprise — One Page (Preview & Full Popup)</title>
-  <style>
-    :root{
-      --pink:#ff7aa2; --rose:#ff9fb8; --mint:#a5f3e6; --lav:#c7d2fe; --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.15);
-      --grad: linear-gradient(135deg,#ffe6ef 0%, #f3fbff 50%, #f2fff7 100%);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:#fff7fb}
-    .hidden{display:none!important}
-    .center{display:flex;align-items:center;justify-content:center}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>คุณรักเราไหม 💕 → M1 Memory</title>
+<style>
+  :root{
+    --pink1:#ffe6ef; --pink3:#fbeafe;
+    --text:#3d2b3a; --muted:#6f5b66; --shadow:rgba(0,0,0,.16); --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,"Noto Sans Thai",sans-serif;color:var(--text);background:linear-gradient(135deg,var(--pink1),var(--pink3))}
+  .hidden{display:none!important}
+  .center{display:flex;align-items:center;justify-content:center}
+  .btn{cursor:pointer;padding:.9rem 1.2rem;border:none;border-radius:999px;background:#ff7aa2;color:#fff;font-weight:700;box-shadow:0 10px 24px var(--shadow);transition:.2s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.secondary{background:#fff;color:#ff7aa2;border:2px solid #ff7aa2}
+  .tiny{font-size:.95rem;color:var(--muted)}
+  .badge{display:inline-block;background:#ffe6ef;color:#c2185b;border-radius:999px;padding:6px 12px;font-weight:700}
 
-    .btn{cursor:pointer;padding:.9rem 1.2rem;border:none;border-radius:999px;background:var(--pink);color:#fff;font-weight:700;box-shadow:0 10px 24px var(--shadow);transition:.2s}
-    .btn:hover:not([disabled]){transform:translateY(-2px)}
-    .btn[disabled]{opacity:.6; cursor:not-allowed}
-    .btn.secondary{background:#fff;color:var(--pink);border:2px solid var(--pink)}
-    .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.85rem;cursor:pointer}
-    .pill.danger{border-color:#fecaca;color:#b91c1c}
-    .tiny{font-size:.85rem;color:var(--muted)}
+  /* Gate */
+  #gate{min-height:100dvh;position:relative;overflow:hidden;padding:20px}
+  #gateCard{max-width:760px;margin:auto;background:var(--card);border-radius:22px;box-shadow:0 16px 48px var(--shadow);padding:28px;text-align:center;position:relative;z-index:2}
 
-    /* Gate */
-    #gate{min-height:100dvh;background:var(--grad);padding:20px}
-    #gateCard{max-width:720px;margin:auto;background:#fff;border-radius:22px;box-shadow:0 16px 48px var(--shadow);padding:28px 24px;text-align:center}
-    #noMsg{margin-top:12px; padding:10px 12px; border:2px dashed #ffc2d4; border-radius:12px; background:#fff7fb; display:none}
+  /* Main */
+  #main{min-height:100dvh;position:relative;overflow:hidden;padding:28px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1.title{margin:8px 0 18px;text-align:center;font-size:clamp(28px,5vw,48px)}
+  .hero{background:var(--card);border:1px solid #ffe0ea;border-radius:18px;box-shadow:0 16px 48px var(--shadow);overflow:hidden;transition:filter .3s ease}
+  .hero.blurred{filter:blur(6px)}
 
-    /* App */
-    #app{position:relative;min-height:100dvh;background:var(--grad);overflow:hidden}
-    .heart-stream{position:absolute;inset:0;pointer-events:none}
-    .heart{position:absolute;top:-10vh;font-size:clamp(14px,2.2vw,28px);opacity:.85;animation:fall linear forwards}
-    @keyframes fall{to{transform:translateY(115vh) rotate(360deg);opacity:.95}}
+  /* Slideshow (flip + cute hearts) */
+  .slide-area{position:relative;aspect-ratio:16/9;display:grid;place-items:center;background:linear-gradient(135deg,#ffdbe8,#e8fff7);perspective:1600px}
+  .slide{position:absolute;inset:0;display:grid;grid-template-rows:1fr auto;opacity:0;transform:rotateY(0deg);transition:opacity .6s ease}
+  .slide figure{margin:0;position:relative;display:grid;place-items:center;overflow:hidden}
+  .slide img{width:100%;height:100%;object-fit:contain}
+  .slide.active{opacity:1;animation:flipIn .8s cubic-bezier(.22,.61,.36,1)}
+  .slide.out{opacity:0;animation:flipOut .8s cubic-bezier(.22,.61,.36,1)}
+  @keyframes flipIn{
+    0%{transform:rotateY(-180deg); filter:drop-shadow(0 10px 20px rgba(0,0,0,.15))}
+    60%{transform:rotateY(-10deg)}
+    100%{transform:rotateY(0deg)}
+  }
+  @keyframes flipOut{ 0%{transform:rotateY(0deg)} 100%{transform:rotateY(180deg); opacity:0} }
+  .caption{background:rgba(255,255,255,.92);border-top:1px solid #ffd6e6;padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .cap-title{font-weight:700}
+  .cap-meta{display:flex;gap:8px;flex-wrap:wrap}
+  .cap-meta span{background:#fff0f6;border:1px solid #ffd6e6;border-radius:999px;padding:4px 10px}
 
-    /* Albums */
-    #albums{max-width:1100px;margin:80px auto;padding:16px}
-    .grid{display:grid;gap:14px;grid-template-columns:repeat(1,1fr)}
-    @media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
-    .card{background:#fff;border:1px solid #ffe0ea;border-radius:16px;box-shadow:0 14px 36px var(--shadow);overflow:hidden;cursor:pointer}
-    .thumb{height:200px;background:linear-gradient(135deg,#ffdbe8,#e8fff7);position:relative}
-    .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-    .meta{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}
-    .badge{background:#ffe6ef;color:#c71d62;border-radius:999px;padding:6px 10px;font-size:.85rem;font-weight:700}
+  /* Transition hearts during flip */
+  .trans-heart{position:absolute;pointer-events:none;font-size:24px;animation:float 1s ease-out forwards}
+  @keyframes float{
+    0%{transform:translateY(0) translateX(0) scale(.8); opacity:0}
+    60%{opacity:1}
+    100%{transform:translateY(-60px) translateX(40px) scale(1.3); opacity:0}
+  }
 
-    /* Book */
-    #bookWrap{max-width:980px;margin:30px auto 100px;padding:16px}
-    .book{position:relative;perspective:1600px;min-height:420px}
-    .page{position:absolute;inset:0;background:#fff;border-radius:16px;box-shadow:0 22px 55px var(--shadow);display:grid;grid-template-rows:auto 1fr auto;transform-origin:left center;transition:transform .8s cubic-bezier(.22,.61,.36,1)}
-    .page.flipped{transform:rotateY(-180deg)}
-    .header{padding:12px 16px;background:linear-gradient(180deg,#fff,#fff7fb);display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .header .row{display:flex;gap:8px;align-items:center}
-    .body{padding:16px;display:grid;gap:14px;grid-template-columns:1fr}
+  /* Background hearts waterfall */
+  .heart-stream{position:fixed;inset:0;pointer-events:none;z-index:1}
+  .heart{position:absolute;top:-10vh;font-size:clamp(16px,2.8vw,28px);opacity:.85;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(115vh) rotate(360deg);opacity:.95}}
 
-    /* Upload (no image yet) */
-    .photo{
-      display:grid; place-items:center;
-      aspect-ratio:4/3;
-      background:#f6f9fc;
-      border:2px dashed #e5e9f2;
-      border-radius:12px;
-    }
+  /* Countdown popup (YES/NO) */
+  #cdBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:90}
+  #cdBackdrop.active{display:flex}
+  #cdBox{background:#fff;border-radius:20px;max-width:620px;width:calc(100% - 40px);padding:28px;text-align:center;box-shadow:0 28px 70px var(--shadow)}
+  #cdNum{font-size:clamp(24px,6vw,42px);font-weight:800;color:#b91c1c}
 
-    /* Preview (small) */
-    .previewWrap{display:grid;place-items:center}
-    .preview{
-      width:clamp(200px,45vw,420px);
-      aspect-ratio:4/3;
-      border-radius:12px; overflow:hidden; position:relative;
-      box-shadow:0 10px 28px rgba(0,0,0,.15); cursor:pointer;
-    }
-    .preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-    .hint{position:absolute;right:10px;bottom:10px;background:rgba(255,255,255,.9);border:1px dashed #ffc2d4;color:#c2185b;border-radius:999px;padding:6px 10px;font-size:.85rem}
+  /* Fireworks overlay (bolder) */
+  #fxBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.28);backdrop-filter:blur(3px);z-index:95}
+  #fxBackdrop.active{display:flex}
+  #fxCanvas{width:100vw;height:100vh;display:block}
+  #fxText{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-weight:900; letter-spacing:.5px; text-align:center; line-height:1.2;
+    font-size:clamp(28px,5vw,56px); color:#ffffff; text-shadow:0 2px 10px rgba(0,0,0,.45);
+    animation:fxTextIn .6s ease-out both;
+  }
+  @keyframes fxTextIn{
+    0%{transform:translateY(14px); opacity:0}
+    100%{transform:translateY(0); opacity:1}
+  }
 
-    /* Editable hint */
-    .editable{outline:2px dashed #ffc2d4; outline-offset:4px; border-radius:10px; padding:6px 8px}
-    .editable:focus{background:#fff7fb}
-    .metaLine{display:flex;gap:8px;flex-wrap:wrap;color:#6f5b66}
-    .metaLine span{background:#fdf2f8;border-radius:999px;padding:6px 10px}
-    .note{
-      color:#6f5b66; line-height:1.55; word-break:break-word;
-      padding:10px 12px; border-radius:10px; background:#fff;
-      outline:2px dashed #ffc2d4; outline-offset:4px;
-    }
-    .controls{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;flex-wrap:wrap}
-
-    /* Info/Confirm popup */
-    #infoBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:70}
-    #infoBackdrop.active{display:flex}
-    #infoBox{background:#fff;border-radius:18px;max-width:480px;width:calc(100% - 40px);padding:20px 18px;box-shadow:0 20px 60px var(--shadow);text-align:center}
-    #dlgBtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-
-    /* Full image lightbox */
-    #imgBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:99}
-    #imgBackdrop.active{display:flex}
-    #imgBox{max-width:95vw;max-height:92vh;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.45)}
-    #imgBox img{display:block;max-width:95vw;max-height:92vh;object-fit:contain}
-    #imgClose{position:absolute;top:14px;right:14px;background:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
-  </style>
+  /* Music */
+  #musicBtn{position:fixed;left:14px;bottom:14px;z-index:80}
+  #musicPanel{position:fixed;left:14px;bottom:68px;z-index:80;width:min(360px,calc(100% - 28px));background:#fff;border:1px solid #ffd6e6;border-radius:14px;box-shadow:0 16px 40px var(--shadow);padding:12px;display:none}
+  #musicPanel.active{display:block}
+  .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.95rem;cursor:pointer}
+</style>
+<script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <!-- Gate: Love question -->
-  <section id="gate" class="center">
-    <div id="gateCard">
-      <h1 style="margin:0 0 8px">เธอรักเราไหม 💕</h1>
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
-        <button id="btnYes" class="btn">Yes</button>
-        <button id="btnNo" class="btn secondary">No</button>
-      </div>
-      <div id="noMsg" class="tiny"></div>
+
+<!-- Gate -->
+<section id="gate" class="center">
+  <div class="heart-stream" id="heartGate"></div>
+  <div id="gateCard">
+    <div class="badge" style="margin-bottom:8px">เริ่มต้นกันก่อน</div>
+    <h1 style="margin:6px 0 8px">คุณรักเราไหม 💕</h1>
+    <p class="tiny">ตอบก่อนนะ แล้วค่อยไปต่อ</p>
+    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px">
+      <button id="yesBtn" class="btn">Yes</button>
+      <button id="noBtn" class="btn secondary">No</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- App -->
-  <main id="app" class="hidden">
-    <div class="heart-stream" id="heartStream"></div>
+<!-- Countdown Popup -->
+<div id="cdBackdrop"><div id="cdBox"><p id="cdLine" class="tiny"></p></div></div>
 
-    <!-- Albums -->
-    <section id="albums" class="hidden">
-      <div style="max-width:1100px;margin:auto;padding:0 16px">
-        <h2 style="margin:20px 0 10px">อัลบั้มครบรอบของเรา</h2>
-        <div class="tiny">อัลบั้มว่างจะมีป๊อปอัป “ยังไม่ถึงเวลาของก้าวต่อไป ✨” พร้อมปุ่ม “เพิ่มหน้าแรก”</div>
-        <div class="grid" id="albumGrid" style="margin-top:14px"></div>
-      </div>
-    </section>
+<!-- Fireworks Overlay -->
+<div id="fxBackdrop">
+  <canvas id="fxCanvas"></canvas>
+  <div id="fxText" class="hidden">Welcome to memory love Y&amp;I</div>
+</div>
 
-    <!-- Book -->
-    <section id="bookWrap" class="hidden">
-      <div style="max-width:980px;margin:auto;padding:0 16px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;gap:8px;flex-wrap:wrap">
-          <div class="badge" id="albumTitle">อัลบั้ม</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="btnAddPhoto" class="btn">+ เพิ่มรูป</button>
-            <button id="backToAlbums" class="btn secondary">กลับเมนูอัลบั้ม</button>
-          </div>
-        </div>
-        <div class="book" id="book"></div>
-        <div class="controls">
-          <button id="prev" class="btn secondary">ย้อนกลับ</button>
-          <button id="next" class="btn">ถัดไป</button>
-          <span class="tiny" id="pageCounter"></span>
-        </div>
-        <p class="tiny" style="margin-top:8px">
-          ถ้ายังไม่มีรูปให้คลิกอัปโหลด • หลังอัปโหลดจะเห็น “พรีวิวจิ๋ว” และปุ่มดูรูปเต็ม •
-          ช่อง <strong>📍ที่ของเรา / 🕒เวลา / คำบรรยาย</strong> แก้ได้ (มีกรอบเส้นปะ) • ลบหน้าได้จากปุ่มถังขยะ
-        </p>
-      </div>
-    </section>
-
-    <!-- Info / Confirm popup -->
-    <div id="infoBackdrop" role="dialog" aria-modal="true" aria-labelledby="infoText">
-      <div id="infoBox">
-        <div id="infoText" style="margin-bottom:12px">ข้อความ</div>
-        <div id="dlgBtns">
-          <button class="btn secondary hidden" id="dlgNo">ไม่</button>
-          <button class="btn" id="dlgYes">ตกลง</button>
-          <button class="btn secondary hidden" id="dlgAlt">เพิ่มหน้าแรก</button>
-        </div>
-      </div>
+<!-- Main -->
+<main id="main" class="hidden">
+  <div class="heart-stream" id="heartMain"></div>
+  <div class="wrap">
+    <h1 class="title">M 1</h1>
+    <div class="hero" id="hero">
+      <div class="slide-area" id="slideArea"><!-- slides inject --></div>
     </div>
+  </div>
+</main>
 
-    <!-- Full image lightbox -->
-    <div id="imgBackdrop" aria-modal="true" role="dialog">
-      <button id="imgClose">ปิด</button>
-      <div id="imgBox"><img id="fullImg" alt="รูปเต็ม"></div>
+<!-- Music -->
+<div id="musicBtn"><button class="btn">🎵 Music</button></div>
+<div id="musicPanel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+    <strong>เพลงพื้นหลัง</strong>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button id="btnPlay" class="pill">▶️ เล่น</button>
+      <button id="btnPause" class="pill">⏸️ หยุด</button>
+      <button id="btnPrev" class="pill">⏮️</button>
+      <button id="btnNext" class="pill">⏭️</button>
+      <button id="btnLoop" class="pill">🔁 วน</button>
+      <button id="btnUnmute" class="pill">🔊 ปลดปิดเสียง</button>
     </div>
-  </main>
+  </div>
+  <div class="tiny" style="margin-top:6px">* ถ้าฟังไม่ดัง ให้กด “ปลดปิดเสียง” หนึ่งครั้ง</div>
+</div>
+<div style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden">
+  <div id="ytplayer"></div>
+</div>
 
-  <script>
-  "use strict";
+<script>
+/* ============== DATA: ใส่ลิงก์ raw GitHub ของคุณ ============== */
+const SLIDES = [
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide01.jpg', place:'สถานที่ 1', date:'01 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 1'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide02.jpg', place:'สถานที่ 2', date:'02 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 2'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide03.jpg', place:'สถานที่ 3', date:'03 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 3'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide04.jpg', place:'สถานที่ 4', date:'04 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 4'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide05.jpg', place:'สถานที่ 5', date:'05 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 5'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide06.jpg', place:'สถานที่ 6', date:'06 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 6'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide07.jpg', place:'สถานที่ 7', date:'07 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 7'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide08.jpg', place:'สถานที่ 8', date:'08 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 8'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide09.jpg', place:'สถานที่ 9', date:'09 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 9'},
+  { src:'https://raw.githubusercontent.com/<user>/<repo>/main/images/slide10.jpg', place:'สถานที่ 10',date:'10 ม.ค. 2025', desc:'ข้อความบรรยายภาพ 10'},
+];
 
-  /* ---------- Data ---------- */
-  const MAX_PAGES_PER_ALBUM = 15;
-  const DEFAULT_DATA={ albums:[
-    {month:1, title:'ครบรอบ 1 เดือน', pages:[
-      {title:'หน้า 1', place:'ที่ของเรา', time:'วันแรก', note:'เริ่มต้นของเรื่องราว', img:''},
-      {title:'หน้า 2', place:'', time:'', note:'เติมภาพความทรงจำ', img:''}
-    ]},
-    {month:2, title:'ครบรอบ 2 เดือน', pages:[]},
-    {month:3, title:'ครบรอบ 3 เดือน', pages:[]},
-  ]};
-  let DATA = load();
-  function load(){ try{const t=localStorage.getItem('albumsDataSimple'); if(t) return JSON.parse(t);}catch(e){} return DEFAULT_DATA; }
-  function save(){ localStorage.setItem('albumsDataSimple', JSON.stringify(DATA)); }
+/* ===== Gate logic ===== */
+const gate = document.getElementById('gate');
+const main = document.getElementById('main');
+const hero = document.getElementById('hero');
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const cdBackdrop = document.getElementById('cdBackdrop');
+const cdLine = document.getElementById('cdLine');
 
-  /* ---------- Gate (Yes/No) ---------- */
-  const gate = document.getElementById('gate');
-  const app  = document.getElementById('app');
-  const btnYes = document.getElementById('btnYes');
-  const btnNo  = document.getElementById('btnNo');
-  const noMsg  = document.getElementById('noMsg');
+noBtn.addEventListener('click', ()=>{
+  cdLine.innerHTML = 'ไม่อนุญาติให่ไม่รักหรอกนะ 😒🙄😤 จะปิดใน <strong id="cdNum">5</strong> วิ';
+  cdBackdrop.classList.add('active');
+  let t=5; const n=()=>document.getElementById('cdNum');
+  const timer=setInterval(()=>{ t--; n().textContent=t; if(t<=0){ clearInterval(timer); cdBackdrop.classList.remove('active'); } },1000);
+});
 
-  btnYes.addEventListener('click', ()=>{
-    gate.classList.add('hidden');
-    app.classList.remove('hidden');
-    showAlbums();
-  });
+yesBtn.addEventListener('click', ()=>{
+  // นับถอยหลัง 5 วิ พร้อมข้อความ
+  cdLine.innerHTML = 'กำลังพาคุณหวานใจไปสู่ความทรงจำอันหวานชื่น… ใน <strong id="cdNum">5</strong> วิ';
+  cdBackdrop.classList.add('active');
+  let t=5; const n=()=>document.getElementById('cdNum');
+  const timer=setInterval(()=>{
+    t--; n().textContent=t;
+    if(t<=0){
+      clearInterval(timer);
+      cdBackdrop.classList.remove('active');
 
-  btnNo.addEventListener('click', ()=>{
-    let left = 5;
-    btnYes.disabled = btnNo.disabled = true;
-    noMsg.style.display = 'block';
-    noMsg.innerHTML = `ไม่อนุญาติให้ไม่รัก ต้องรักเท่านั้น ชิ!! 😝🤪 <br/>ปิดใน <strong id="count">5</strong> วิ`;
-    const c = document.getElementById('count');
-    const t = setInterval(()=>{
-      left--; c.textContent = String(left);
-      if(left<=0){
-        clearInterval(t);
-        noMsg.style.display = 'none';
-        btnYes.disabled = btnNo.disabled = false;
-      }
-    },1000);
-  });
+      // เข้าหน้า main + พลุ + เบลอพื้นหลัง + ปลดปิดเสียงเพลง
+      gate.classList.add('hidden');
+      main.classList.remove('hidden');
+      hero.classList.add('blurred');
+      try{ ytPlayer.unMute(); }catch(e){}
+      startFireworks(4000, ()=>{
+        hero.classList.remove('blurred');
+        startSlides();
+      });
+    }
+  },1000);
+});
 
-  /* ---------- Hearts BG ---------- */
-  const heartStream=document.getElementById('heartStream');
+/* ===== Hearts waterfall ===== */
+function spawnHearts(containerId){
+  const stream = document.getElementById(containerId);
   const hearts=['💗','💖','💓','💞','💝','💘','💟'];
   setInterval(()=>{
     const h=document.createElement('div');
@@ -222,242 +211,234 @@
     h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
     h.style.left=(Math.random()*100)+'%';
     h.style.animationDuration=(6+Math.random()*6)+'s';
-    heartStream.appendChild(h);
-    setTimeout(()=>h.remove(), 13000);
-  }, 400);
+    stream.appendChild(h);
+    setTimeout(()=>h.remove(),13000);
+  }, 420);
+}
+spawnHearts('heartGate'); spawnHearts('heartMain');
 
-  /* ---------- Popups ---------- */
-  const infoBackdrop=document.getElementById('infoBackdrop');
-  const infoText=document.getElementById('infoText');
-  const dlgYes=document.getElementById('dlgYes');
-  const dlgNo=document.getElementById('dlgNo');
-  const dlgAlt=document.getElementById('dlgAlt');
+/* ===== Slideshow (flip w/ hearts) ===== */
+const slideArea = document.getElementById('slideArea');
+let slideIndex=0, slideTimer=null, DURATION=3000;
 
-  function infoPopup(msg,{okText='ตกลง'}={}){ // info only
-    infoText.textContent=msg;
-    dlgNo.classList.add('hidden');
-    dlgAlt.classList.add('hidden');
-    dlgYes.textContent=okText;
-    infoBackdrop.classList.add('active');
-    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; };
-    dlgYes.onclick=close;
+function renderSlides(){
+  slideArea.innerHTML='';
+  SLIDES.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='slide';
+    el.innerHTML = `
+      <figure><img src="${s.src}" alt="slide ${i+1}"></figure>
+      <figcaption class="caption">
+        <span class="cap-title">ภาพที่ ${i+1}/10</span>
+        <div class="cap-meta"><span>📍 ${s.place||''}</span><span>🗓️ ${s.date||''}</span></div>
+        <div class="tiny">${s.desc||''}</div>
+      </figcaption>`;
+    slideArea.appendChild(el);
+  });
+}
+function showSlide(next){
+  const slides=[...document.querySelectorAll('.slide')];
+  slides.forEach(el=> el.classList.remove('active','out'));
+  const prev=slideIndex, outEl=slides[prev]; if(outEl){ outEl.classList.add('out'); }
+  slideIndex=next;
+  const inEl=slides[slideIndex]; if(inEl){ inEl.classList.add('active'); spawnTransitionHearts(); }
+}
+function nextSlide(){ showSlide((slideIndex+1)%SLIDES.length); }
+function startSlides(){
+  if(!SLIDES.length) return;
+  renderSlides(); slideIndex=0; showSlide(0);
+  clearInterval(slideTimer); slideTimer=setInterval(nextSlide, DURATION);
+}
+function spawnTransitionHearts(){
+  const hearts=['💗','💖','💓','💞','💝'];
+  for(let i=0;i<7;i++){
+    const h=document.createElement('div');
+    h.className='trans-heart';
+    h.textContent=hearts[(Math.random()*hearts.length)|0];
+    h.style.left=(10+Math.random()*80)+'%';
+    h.style.bottom=(10+Math.random()*40)+'px';
+    slideArea.appendChild(h);
+    setTimeout(()=>h.remove(),1000);
   }
-  function confirmPopup(msg,{yesText='ใช่',noText='ไม่'}={},onYes){ // yes/no
-    infoText.textContent=msg;
-    dlgNo.classList.remove('hidden');
-    dlgAlt.classList.add('hidden');
-    dlgYes.textContent=yesText;
-    dlgNo.textContent=noText;
-    infoBackdrop.classList.add('active');
-    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; dlgNo.onclick=null; };
-    dlgNo.onclick=close;
-    dlgYes.onclick=()=>{ close(); onYes && onYes(); };
+}
+
+/* ===== Fireworks (bolder to center + text) ===== */
+const fxBackdrop=document.getElementById('fxBackdrop');
+const fxCanvas=document.getElementById('fxCanvas');
+const fxText=document.getElementById('fxText');
+const ctx=fxCanvas.getContext('2d');
+let fwParticles=[], fwRaf=null;
+
+function resizeCanvas(){ fxCanvas.width=window.innerWidth; fxCanvas.height=window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+
+function startFireworks(duration=4000, onDone=()=>{}){
+  resizeCanvas();
+  fxText.classList.remove('hidden');
+  fxBackdrop.classList.add('active');
+  fwParticles=[];
+  const start=performance.now();
+
+  function spawnRocket(){
+    const x = Math.random()*fxCanvas.width*0.8 + fxCanvas.width*0.1;
+    const y = fxCanvas.height + 20;
+    const targetY = fxCanvas.height*0.45 + (Math.random()*40-20); // 🎯 ใกล้กึ่งกลางจอ
+    const vy = - (8 + Math.random()*3);
+    const vx = (Math.random()-.5)*1.2;
+    fwParticles.push({type:'rocket',x,y,vx,vy,targetY,color:randColor(),life:700});
   }
-  function infoWithAlt(msg,{altText='เพิ่มหน้าแรก', onAlt}={}){ // info + alt
-    infoText.textContent=msg;
-    dlgNo.classList.add('hidden');
-    dlgYes.textContent='ตกลง';
-    dlgAlt.classList.remove('hidden');
-    dlgAlt.textContent=altText;
-    infoBackdrop.classList.add('active');
-    const close=()=>{ infoBackdrop.classList.remove('active'); dlgYes.onclick=null; dlgAlt.onclick=null; };
-    dlgYes.onclick=close;
-    dlgAlt.onclick=()=>{ onAlt && onAlt(); close(); };
-  }
-
-  /* ---------- Albums Grid ---------- */
-  const albumGrid=document.getElementById('albumGrid');
-  function showAlbums(){
-    document.getElementById('albums').classList.remove('hidden');
-    document.getElementById('bookWrap').classList.add('hidden');
-    renderAlbumGrid();
-  }
-
-  function renderAlbumGrid(){
-    albumGrid.innerHTML='';
-    DATA.albums.sort((a,b)=>a.month-b.month).forEach(alb=>{
-      const hasPages = alb.pages && alb.pages.length>0;
-      const cover = (alb.pages||[]).find(p=>p.img);
-      const card=document.createElement('div'); card.className='card';
-      card.innerHTML = `
-        <div class="thumb">${cover?`<img src="${cover.img}" alt="">`:''}</div>
-        <div class="meta">
-          <div>
-            <strong>${alb.title||('ครบรอบ '+alb.month+' เดือน')}</strong>
-            <div class="tiny">${hasPages? (alb.pages.length+' หน้า'):'ยังไม่ถึงเวลาของก้าวต่อไป ✨'}</div>
-          </div>
-          <span class="badge">M${alb.month}</span>
-        </div>`;
-      card.addEventListener('click',()=>{
-        if(!hasPages){
-          infoWithAlt('ยังไม่ถึงเวลาของก้าวต่อไป ✨', {
-            altText:'เพิ่มหน้าแรก',
-            onAlt:()=> addFirstPage(alb.month)
-          });
-          return;
-        }
-        openAlbum(alb.month);
-      });
-      albumGrid.appendChild(card);
-    });
-
-    // add new album card
-    const add=document.createElement('div'); add.className='card';
-    add.innerHTML=`<div class="thumb"></div><div class="meta"><strong>+ เพิ่มอัลบั้มใหม่</strong><span class="badge">NEW</span></div>`;
-    add.addEventListener('click',()=>{
-      const m = prompt('ใส่เลขเดือนครบรอบ (เช่น 4 = ครบรอบ 4 เดือน)');
-      const month = parseInt(m||'0',10); if(!month) return;
-      if(DATA.albums.find(a=>a.month===month)){ infoPopup('มีอัลบั้มเดือนนี้แล้ว'); return; }
-      DATA.albums.push({month, title:`ครบรอบ ${month} เดือน`, pages:[]}); save(); renderAlbumGrid();
-    });
-    albumGrid.appendChild(add);
-  }
-
-  function addFirstPage(month){
-    const alb = DATA.albums.find(a=>a.month===month);
-    if(!alb) return;
-    if(!alb.pages) alb.pages=[];
-    alb.pages.push({title:'หน้า 1', place:'', time:'', note:'เริ่มเพิ่มความทรงจำของเรา', img:''});
-    save();
-    openAlbum(month);
-  }
-
-  /* ---------- Book Viewer ---------- */
-  let CURRENT_ALBUM=null, currentPage=0;
-
-  function openAlbum(month){
-    CURRENT_ALBUM = DATA.albums.find(a=>a.month===month);
-    if(!CURRENT_ALBUM) return;
-    document.getElementById('albums').classList.add('hidden');
-    document.getElementById('bookWrap').classList.remove('hidden');
-    document.getElementById('albumTitle').textContent = CURRENT_ALBUM.title || ('ครบรอบ '+CURRENT_ALBUM.month+' เดือน');
-    currentPage=0;
-    renderPages();
-    updateFlip();
-  }
-
-  // ถ้ายังไม่มีรูป -> กล่องอัปโหลด, ถ้ามีแล้ว -> พรีวิวจิ๋ว + ปุ่มดูรูปเต็ม
-  function pageTpl(i,p,isLast){
-    const bodyContent = p.img
-      ? `<div class="previewWrap">
-           <div class="preview" onclick="openFull(${i})" role="button" aria-label="ดูรูปเต็ม">
-             <img src="${p.img}" alt="">
-             <div class="hint">แตะเพื่อดูรูปเต็ม</div>
-           </div>
-         </div>`
-      : `<div class="photo" onclick="triggerUpload(${i})">
-           <span class="tiny">คลิกเพื่ออัปโหลดรูป</span>
-         </div>`;
-
-    return `<article class="page ${i<currentPage?'flipped':''}" data-i="${i}" style="z-index:${100-i}">
-      <div class="header">
-        <div class="row">
-          <strong class="editable" contenteditable="true" oninput="editTitle(${i},this.innerText)">${p.title||('หน้า '+(i+1))}</strong>
-          <span class="badge">${isLast?'THE END':'PAGE '+(i+1)}</span>
-        </div>
-        <div class="row">
-          <button class="pill danger" onclick="deletePage(${i})">🗑️ ลบหน้านี้</button>
-        </div>
-      </div>
-      <div class="body">
-        ${bodyContent}
-        <div class="metaLine">
-          <span>📍 <em class="editable" contenteditable="true" oninput="editPlace(${i},this.innerText)">${p.place||''}</em></span>
-          <span>🕒 <em class="editable" contenteditable="true" oninput="editTime(${i},this.innerText)">${p.time||''}</em></span>
-        </div>
-        <div class="note editable" contenteditable="true" oninput="editNote(${i},this.innerText)">${p.note||''}</div>
-      </div>
-    </article>`;
-  }
-
-  function renderPages(){
-    const book=document.getElementById('book');
-    const pages = CURRENT_ALBUM.pages;
-    const last=pages.length-1;
-    book.innerHTML = pages.map((p,i)=>pageTpl(i,p, i===last)).join('') + `<input id="uploader" type="file" accept="image/*" class="hidden"/>`;
-    document.getElementById('uploader').addEventListener('change', handleUpload);
-    document.getElementById('pageCounter').textContent = `(${pages.length}/${MAX_PAGES_PER_ALBUM})`;
-    document.getElementById('btnAddPhoto').disabled = pages.length>=MAX_PAGES_PER_ALBUM;
-
-    if(!pages.length){
-      infoWithAlt('อัลบั้มนี้ยังไม่มีรูป ลองเพิ่มรูปแรกกันเลย?', {
-        altText:'เพิ่มหน้าแรก',
-        onAlt:()=>{ CURRENT_ALBUM.pages.push({title:'หน้า 1', place:'', time:'', note:'', img:''}); save(); renderPages(); updateFlip(); }
-      });
+  function explode(x,y,color){
+    const count = 120; // เยอะขึ้น ชัดขึ้น
+    for(let i=0;i<count;i++){
+      const angle = Math.random()*Math.PI*2;
+      const speed = 2.5+Math.random()*3.5;
+      const size = 1.5+Math.random()*2.2;
+      fwParticles.push({type:'spark',x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,alpha:1,color,life:700,size});
+    }
+    // เพิ่มแฉกแสงกลางจอ
+    for(let i=0;i<10;i++){
+      fwParticles.push({type:'ray',x,y,dir:i,alpha:1,color,life:500});
     }
   }
-
-  function updateFlip(){
-    const pages=[...document.querySelectorAll('#book .page')];
-    pages.forEach((pg,i)=>{ pg.classList.toggle('flipped', i<currentPage); });
-    document.getElementById('prev').disabled = currentPage===0;
-    document.getElementById('next').textContent = currentPage===pages.length-1? 'กลับเมนูอัลบั้ม' : 'ถัดไป';
+  function randColor(){
+    const cols=['#ff7aa2','#ffd166','#06d6a0','#70a1ff','#f78fb3','#c56cf0','#f94144','#43aa8b'];
+    return cols[(Math.random()*cols.length)|0];
   }
 
-  document.getElementById('next').addEventListener('click',()=>{
-    const total=(CURRENT_ALBUM?.pages||[]).length;
-    if(currentPage<total-1){ currentPage++; updateFlip(); }
-    else { showAlbums(); }
-  });
-  document.getElementById('prev').addEventListener('click',()=>{ if(currentPage>0){ currentPage--; updateFlip(); }});
-  document.getElementById('backToAlbums').addEventListener('click', showAlbums);
+  function tick(now){
+    const elapsed = now - start;
+    ctx.clearRect(0,0,fxCanvas.width,fxCanvas.height);
 
-  document.getElementById('btnAddPhoto').addEventListener('click',()=>{
-    const pages=CURRENT_ALBUM.pages;
-    if(pages.length>=MAX_PAGES_PER_ALBUM){ infoPopup(`ครบ ${MAX_PAGES_PER_ALBUM} รูปแล้ว`); return; }
-    pages.push({title:`หน้า ${pages.length+1}`, place:'', time:'', note:'', img:''});
-    save(); renderPages(); updateFlip();
-  });
+    if(Math.random()<0.12) spawnRocket();
 
-  // inline editors save
-  window.editTitle=(i,val)=>{ CURRENT_ALBUM.pages[i].title=val; persist(); };
-  window.editPlace=(i,val)=>{ CURRENT_ALBUM.pages[i].place=val; persist(); };
-  window.editTime =(i,val)=>{ CURRENT_ALBUM.pages[i].time =val; persist(); };
-  window.editNote =(i,val)=>{ CURRENT_ALBUM.pages[i].note =val; persist(); };
-
-  // delete page (Yes/No)
-  window.deletePage=(i)=>{
-    confirmPopup('ลบหน้านี้แน่นะ?', {yesText:'ใช่', noText:'ไม่'}, ()=>{
-      CURRENT_ALBUM.pages.splice(i,1);
-      if(currentPage>0) currentPage--;
-      persist(); renderPages(); updateFlip();
+    fwParticles.forEach(p=>{
+      if(p.type==='rocket'){
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life-=16;
+        // ควัน/ไอพ่น
+        ctx.fillStyle='rgba(255,255,255,.8)';
+        ctx.fillRect(p.x, p.y, 2, 10);
+        if(p.y <= p.targetY || p.life<=0){ p.life=-1; explode(p.x,p.y,p.color); }
+      }else if(p.type==='spark'){
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.03; p.life-=16; p.alpha-=0.012;
+        ctx.fillStyle=p.color; ctx.globalAlpha=Math.max(0,p.alpha);
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.size||2,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha=1;
+      }else if(p.type==='ray'){
+        p.life-=16; p.alpha-=0.03;
+        ctx.strokeStyle=p.color; ctx.globalAlpha=Math.max(0,p.alpha);
+        ctx.lineWidth=2;
+        const len = 90;
+        ctx.beginPath();
+        const ang = (Math.PI*2/10)*p.dir;
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + Math.cos(ang)*len, p.y + Math.sin(ang)*len);
+        ctx.stroke(); ctx.globalAlpha=1;
+      }
     });
-  };
+    fwParticles = fwParticles.filter(p=>p.life>0);
 
-  // upload (only when no image yet)
-  let uploadIndex=0;
-  window.triggerUpload=(i)=>{ uploadIndex=i; document.getElementById('uploader').click(); };
-  function handleUpload(e){
-    const f=e.target.files[0]; if(!f) return;
-    const r=new FileReader();
-    r.onload=()=>{ CURRENT_ALBUM.pages[uploadIndex].img=r.result; persist(); renderPages(); updateFlip(); };
-    r.readAsDataURL(f);
+    if(elapsed < duration){
+      fwRaf = requestAnimationFrame(tick);
+    }else{
+      cancelAnimationFrame(fwRaf);
+      fxBackdrop.classList.remove('active');
+      fxText.classList.add('hidden');
+      onDone();
+    }
   }
+  fwRaf = requestAnimationFrame(tick);
+}
 
-  // full image popup
-  const imgBackdrop=document.getElementById('imgBackdrop');
-  const fullImg=document.getElementById('fullImg');
-  document.getElementById('imgClose').addEventListener('click', ()=> imgBackdrop.classList.remove('active'));
-  imgBackdrop.addEventListener('click', (ev)=>{ if(ev.target===imgBackdrop) imgBackdrop.classList.remove('active'); });
-  window.openFull=(i)=>{
-    const p = CURRENT_ALBUM.pages[i]; if(!p || !p.img) return;
-    fullImg.src = p.img;
-    imgBackdrop.classList.add('active');
-  };
+/* ===== Music (YouTube) — autoplay BEFORE gate (muted), unmute after YES ===== */
+const musicBtn=document.getElementById('musicBtn');
+const musicPanel=document.getElementById('musicPanel');
+const btnPlay=document.getElementById('btnPlay');
+const btnPause=document.getElementById('btnPause');
+const btnPrev=document.getElementById('btnPrev');
+const btnNext=document.getElementById('btnNext');
+const btnLoop=document.getElementById('btnLoop');
+const btnUnmute=document.getElementById('btnUnmute');
 
-  function persist(){ save(); }
+musicBtn.addEventListener('click', ()=> musicPanel.classList.toggle('active'));
 
-  // self-tests (console)
+let ytPlayer, ytReady=false;
+const MUSIC={ urls:['https://youtu.be/0P6P115Wh8Y?list=PL1yLr3qFTpM_GMpbbjAeM4hNd6SbDqIXF'], index:0, loop:true };
+
+window.onYouTubeIframeAPIReady = function(){
+  ytReady = true;
+  const {vid, list} = parseYouTube(MUSIC.urls[MUSIC.index]);
+  initPlayer(vid, list);
+};
+
+function initPlayer(videoId, listId){
+  ytPlayer = new YT.Player('ytplayer', {
+    height:'0', width:'0',
+    videoId: videoId,
+    playerVars:{ playsinline:1, autoplay:1, mute:1, loop:1, playlist: listId || videoId },
+    events:{ 'onReady': onYtReady, 'onStateChange': onYtState }
+  });
+}
+function onYtReady(){
+  try{
+    ytPlayer.mute();      // บังคับปิดเสียง
+    ytPlayer.playVideo(); // เล่นทันที (autoplay allowed เมื่อ mute)
+  }catch(e){}
+}
+function loadAndPlay(force=false){
+  if(!ytReady) return;
+  const {vid, list}=parseYouTube(MUSIC.urls[MUSIC.index]);
+  if(!ytPlayer){ initPlayer(vid, list); return; }
+  if(list){ ytPlayer.loadPlaylist({list:list, index:0}); } else { ytPlayer.loadVideoById(vid); }
+  if(force){ try{ ytPlayer.playVideo(); }catch(e){} }
+}
+function onYtState(e){
+  // ถ้าจบและไม่มี playlist ให้ลูปเดี่ยว
+  if(e.data===0 && !hasPlaylist(MUSIC.urls[MUSIC.index])){ try{ ytPlayer.playVideo(); }catch(e){} }
+}
+// Controls
+btnPlay.addEventListener('click', ()=> loadAndPlay(true));
+btnPause.addEventListener('click', ()=>{ try{ ytPlayer.pauseVideo(); }catch(e){} });
+btnPrev .addEventListener('click', ()=>{ MUSIC.index=(MUSIC.index-1+MUSIC.urls.length)%MUSIC.urls.length; loadAndPlay(true); });
+btnNext .addEventListener('click', ()=>{ MUSIC.index=(MUSIC.index+1)%MUSIC.urls.length; loadAndPlay(true); });
+btnLoop.addEventListener('click', ()=>{ MUSIC.loop=!MUSIC.loop; btnLoop.style.borderColor = MUSIC.loop? '#b6f0c8':'#ffd6e6'; });
+btnUnmute.addEventListener('click', ()=>{ try{ ytPlayer.unMute(); }catch(e){} });
+
+// fallback: คลิกใด ๆ บนหน้า = พยายามเล่น (กันเคสเบราว์เซอร์เข้มงวด)
+document.addEventListener('click', ()=> loadAndPlay(true), {once:true});
+
+function hasPlaylist(url){ try{ const u=new URL(url); return !!u.searchParams.get('list'); }catch(e){ return false; } }
+function parseYouTube(url){
+  try{
+    const u=new URL(url);
+    const list=u.searchParams.get('list')||null;
+    let vid=u.searchParams.get('v')||null;
+    if(u.hostname.includes('youtu.be')) vid=u.pathname.replace('/','');
+    if(!vid && u.pathname.includes('/embed/')) vid=u.pathname.split('/embed/')[1];
+    if(!vid){ const m=url.match(/[?&]v=([^&#]+)/); if(m) vid=m[1]; }
+    return {vid, list};
+  }catch(e){
+    const m=url.match(/[?&]v=([^&#]+)/);
+    return {vid: m?m[1]:null, list:null};
+  }
+}
+</script>
+
+<!-- background hearts (extra gentle) -->
+<div class="heart-stream" id="heartBg" style="z-index:0"></div>
+<script>
   (function(){
-    try{
-      console.group('%cSelf-Tests','color:#c2185b;font-weight:bold');
-      console.assert(document.getElementById('btnYes') && document.getElementById('btnNo'), 'Love Gate buttons present');
-      console.assert(typeof showAlbums === 'function', 'showAlbums exists');
-      console.assert(typeof renderPages === 'function', 'renderPages exists');
-      console.log('All basic tests passed ✓');
-      console.groupEnd();
-    }catch(e){ console.error('Self-tests failed', e); }
+    const stream=document.getElementById('heartBg');
+    const hearts=['💗','💖','💓','💞','💝','💘','💟'];
+    setInterval(()=>{
+      const h=document.createElement('div');
+      h.className='heart';
+      h.textContent=hearts[(Math.random()*hearts.length)|0];
+      h.style.left=(Math.random()*100)+'%';
+      h.style.animationDuration=(10+Math.random()*10)+'s';
+      stream.appendChild(h);
+      setTimeout(()=>h.remove(),20000);
+    },800);
   })();
-  </script>
+</script>
 </body>
 </html>
