@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>คุณรักเราไหม 💕 → M1 Memory</title>
 
+<!-- ฟอนต์ไทยน่ารัก -->
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;400;600;700&family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 
@@ -89,12 +90,13 @@
     background:#fff;border:1px solid #ffd6e6;border-radius:14px;
     box-shadow:0 16px 40px var(--shadow);padding:12px;display:none
   }
-  #musicPanel.active{display:block} /* ← สำคัญ: ให้โผล่เมื่อกด */
+  #musicPanel.active{display:block}
   .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.95rem;cursor:pointer}
 </style>
 </head>
 <body>
 
+<!-- Gate -->
 <section id="gate" class="center">
   <div class="heart-stream" id="heartGate"></div>
   <div id="gateCard">
@@ -108,13 +110,16 @@
   </div>
 </section>
 
+<!-- Countdown -->
 <div id="cdBackdrop"><div id="cdBox"><p id="cdLine" class="tiny"></p></div></div>
 
+<!-- Fireworks -->
 <div id="fxBackdrop">
   <canvas id="fxCanvas"></canvas>
-  <div id="fxText">Welcome to memory love U&amp;I</div>
+  <div id="fxText">Welcome to memory love Y&amp;I</div>
 </div>
 
+<!-- Main -->
 <main id="main" class="hidden">
   <div class="heart-stream" id="heartMain"></div>
   <div class="wrap">
@@ -142,7 +147,7 @@
 
 <script>
 /* ===== CONFIG ===== */
-const MUSIC_SRC = 'cuteJp.mp3';
+const MUSIC_SRC = 'cuteJp.mp3'; // แนะนำย้ายไปโดเมนเดียวกัน แล้วใช้ './audio/cuteJp.mp3'
 const IMG_BASE  = 'https://raw.githubusercontent.com/ntu6008111004/lover/main/images/';
 const IMAGES    = Array.from({length:10},(_,i)=> IMG_BASE + `slide${String(i+1).padStart(2,'0')}.jpg`);
 const INTERVAL_MS = 4000;
@@ -177,7 +182,7 @@ yesBtn.addEventListener('click', ()=>{
       main.classList.remove('hidden');
       hero.classList.add('blurred');
 
-      unmuteMusic(); // ปลดล็อก/เล่นเพลงหลังมี gesture แล้ว
+      unmuteMusic(); // เล่นเพลงหลังมี gesture แล้ว
 
       startFireworks(4000, ()=>{
         hero.classList.remove('blurred');
@@ -205,16 +210,16 @@ const slideArea = document.getElementById('slideArea');
 let slideIndex=0, slideTimer=null;
 
 const slideData = [
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "หวานเจี๋ยบบบบบบบบ" },
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "ชอบที่เธอเป็นแบบนี้แหละ" },
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "ไม่ปั่นไม่ป่วนไม่ใช่เรา" },
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "เจ้าคนน่ารัก" },
-  { place: "The Haus 224", date: "24 ก.ค. 2025", desc: "เบลอที่แปลว่า...ไรน้าาา" },
-  { place: "The Haus 224", date: "24 ก.ค. 2025", desc: "ทำหน้าทำไมแบบนั้นอะ" },
-  { place: "The Haus 224", date: "24 ก.ค. 2025", desc: "ทำหน้าปกติกันบ้างสิ" },
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "ขอหล่อเท่รูปนึ่ง" },
-  { place: "Attika Studio", date: "03 ส.ค. 2025", desc: "แค่มองตาก็รู้ว่าอยากหนม..." },
-  { place:  "Attika Studio", date: "03 ส.ค. 2025", desc: "แช่ะๆๆๆ" },
+  { place:"กรุงเทพฯ", date:"14 ก.พ. 2025", desc:"ดินเนอร์วันวาเลนไทน์" },
+  { place:"เชียงใหม่", date:"20 มี.ค. 2025", desc:"ทริปอินทนนท์" },
+  { place:"ภูเก็ต",  date:"2 เม.ย. 2025",  desc:"เล่นน้ำสงกรานต์ริมหาด" },
+  { place:"ขอนแก่น", date:"10 พ.ค. 2025", desc:"ไปร่วมงานเพื่อน" },
+  { place:"หัวหิน",   date:"5 มิ.ย. 2025",  desc:"พักผ่อนริมทะเล" },
+  { place:"สมุย",     date:"18 ก.ค. 2025", desc:"ดำน้ำดูปะการัง" },
+  { place:"สุโขทัย",  date:"12 ส.ค. 2025", desc:"ไหว้พระกลางแจ้ง" },
+  { place:"อยุธยา",   date:"25 ก.ย. 2025", desc:"ตามรอยประวัติศาสตร์" },
+  { place:"นครปฐม",  date:"8 ต.ค. 2025",  desc:"ชิมส้มโอหวาน" },
+  { place:"พัทยา",   date:"30 พ.ย. 2025", desc:"ดูพระอาทิตย์ตก" },
 ];
 
 function renderSlides(urls){
@@ -315,7 +320,7 @@ function startFireworks(duration=4000,onDone=()=>{}){
   fwRaf=requestAnimationFrame(tick);
 }
 
-/* ===== Music (MP3) — iOS Safari friendly ===== */
+/* ===== Music (iOS-safe) ===== */
 const musicBtn=document.getElementById('musicBtn');
 const musicPanel=document.getElementById('musicPanel');
 const btnPlay=document.getElementById('btnPlay');
@@ -324,45 +329,38 @@ const btnLoop=document.getElementById('btnLoop');
 const btnUnmute=document.getElementById('btnUnmute');
 musicBtn?.addEventListener('click', ()=> musicPanel.classList.toggle('active'));
 
-// ใช้ <audio> element เพื่อความเข้ากันได้
 const bgMusic = new Audio(MUSIC_SRC);
-bgMusic.loop = true;
 bgMusic.preload = 'auto';
-bgMusic.muted = true;
-bgMusic.playsInline = true; // iOS
+bgMusic.loop = true;
+bgMusic.muted = true;        // เริ่มแบบปิดเสียง
+bgMusic.playsInline = true;  // สำคัญบน iOS
 bgMusic.setAttribute('playsinline','');
 bgMusic.setAttribute('webkit-playsinline','');
 
 let audioUnlocked = false;
-function iosUnlock(){
-  if(audioUnlocked) return;
-  // เล่นแบบเงียบแล้วหยุดทันที เพื่อปลดล็อกสิทธิ์การเล่น
+function iosUnlockOnce(){
+  if (audioUnlocked) return;
   bgMusic.play().then(()=>{
     bgMusic.pause();
     bgMusic.currentTime = 0;
     audioUnlocked = true;
-  }).catch(()=>{ /* เงียบไว้ */ });
+  }).catch(()=>{});
 }
 ['touchstart','pointerdown','click','keydown'].forEach(evt=>{
-  document.addEventListener(evt, iosUnlock, {once:true, passive:true});
+  document.addEventListener(evt, iosUnlockOnce, { once:true, passive:true });
 });
 
-// Controls
-btnPlay?.addEventListener('click', ()=>{
-  iosUnlock();
-  bgMusic.muted = false;
-  bgMusic.play().catch(()=>{});
-});
-btnPause?.addEventListener('click', ()=> bgMusic.pause());
-btnLoop ?.addEventListener('click', ()=>{ bgMusic.loop=!bgMusic.loop; btnLoop.style.borderColor=bgMusic.loop?'#b6f0c8':'#ffd6e6'; });
-btnUnmute?.addEventListener('click', ()=>{ iosUnlock(); bgMusic.muted=false; bgMusic.play().catch(()=>{}); });
-
-// ใช้ตอนเข้า main หลัง YES
 function unmuteMusic(){
-  iosUnlock();
+  iosUnlockOnce();
   bgMusic.muted = false;
   bgMusic.play().catch(()=>{});
 }
+
+/* Controls */
+btnPlay  ?.addEventListener('click', unmuteMusic);
+btnUnmute?.addEventListener('click', unmuteMusic);
+btnPause ?.addEventListener('click', ()=> bgMusic.pause());
+btnLoop  ?.addEventListener('click', ()=>{ bgMusic.loop=!bgMusic.loop; btnLoop.style.borderColor=bgMusic.loop?'#b6f0c8':'#ffd6e6'; });
 </script>
 </body>
 </html>
