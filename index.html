@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>คุณรักเราไหม 💕 → M1 Memory</title>
 
-<!-- ฟอนต์ไทยน่ารัก -->
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;400;600;700&family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- เร่ง handshake โดเมนรูป -->
 <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 
 <style>
@@ -34,7 +32,7 @@
   .hero{background:var(--card);border:1px solid #ffe0ea;border-radius:18px;box-shadow:0 16px 48px var(--shadow);overflow:hidden;transition:filter .3s ease;position:relative;z-index:2}
   .hero.blurred{filter:blur(6px)}
 
-  /* Slide area vertical frame (2:3) */
+  /* Slide area 2:3 */
   .slide-area{
     --w:min(90vw,360px);
     width:var(--w);
@@ -52,64 +50,47 @@
   .slide img{width:100%;height:100%;object-fit:cover;object-position:center;background:transparent}
   .slide.active{opacity:1;animation:flipIn .8s cubic-bezier(.22,.61,.36,1)}
   .slide.out{opacity:0;animation:flipOut .8s cubic-bezier(.22,.61,.36,1)}
-  /* ✅ แสดงสไลด์แรกแบบทันที ไม่ต้องแอนิเมชัน และบังคับเพนต์ */
   .slide.instant{opacity:1 !important; animation:none !important; transform:none !important}
 
   @keyframes flipIn{0%{transform:rotateY(-180deg);filter:drop-shadow(0 10px 20px rgba(0,0,0,.15))}60%{transform:rotateY(-10deg)}100%{transform:rotateY(0)}}
   @keyframes flipOut{0%{transform:rotateY(0)}100%{transform:rotateY(180deg);opacity:0}}
 
-  .caption{background:rgba(255,255,255,.92);border-top:1px solid #ffd6e6;padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  /* Caption */
+  .caption{background:rgba(255,255,255,.92);border-top:1px solid #ffd6e6;padding:12px 14px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
   .cap-title{font-weight:700}
   .cap-meta{display:flex;gap:8px;flex-wrap:wrap}
   .cap-meta span{background:#fff0f6;border:1px solid #ffd6e6;border-radius:999px;padding:4px 10px}
+  .caption .tiny{margin-left:0;text-align:left}
 
+  /* Hearts */
   .trans-heart{position:absolute;pointer-events:none;font-size:24px;animation:float 1s ease-out forwards}
   @keyframes float{0%{transform:translateY(0) translateX(0) scale(.8);opacity:0}60%{opacity:1}100%{transform:translateY(-60px) translateX(40px) scale(1.3);opacity:0}}
-
-  /* Background hearts behind everything */
   .heart-stream{position:fixed;inset:0;pointer-events:none;z-index:0}
   .heart{position:absolute;top:-10vh;font-size:clamp(16px,2.8vw,28px);opacity:.85;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(115vh) rotate(360deg);opacity:.95}}
 
-  /* Countdown popup */
+  /* Popup */
   #cdBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:90}
   #cdBackdrop.active{display:flex}
   #cdBox{background:#fff;border-radius:20px;max-width:620px;width:calc(100% - 40px);padding:28px;text-align:center;box-shadow:0 28px 70px var(--shadow)}
   #cdNum{font-size:clamp(24px,6vw,42px);font-weight:800;color:#b91c1c}
 
-  /* Fireworks overlay */
+  /* Fireworks */
   #fxBackdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.28);backdrop-filter:blur(3px);z-index:95}
   #fxBackdrop.active{display:flex}
   #fxCanvas{width:100vw;height:100vh;display:block}
-  #fxText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:.5px;text-align:center;line-height:1.2;font-size:clamp(28px,5vw,56px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);animation:fxTextIn .6s ease-out both;font-family:"Mali","Kanit","Noto Sans Thai",sans-serif}
-  @keyframes fxTextIn{0%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:1}}
+  #fxText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:.5px;text-align:center;line-height:1.2;font-size:clamp(28px,5vw,56px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45)}
 
-  /* Music panel */
+  /* Music button/panel → right-bottom */
   #musicBtn{position:fixed;right:14px;bottom:14px;z-index:80}
-  #musicPanel{position:fixed;right:14px;bottom:68px;z-index:80;width:min(360px,calc(100% - 28px));background:#fff;border:1px solid #ffd6e6;border-radius:14px;box-shadow:0 16px 40px var(--shadow);padding:12px;display:none}
-  #musicPanel.active{display:block}
+  #musicPanel{
+    position:fixed;right:14px;bottom:68px;z-index:80;
+    width:min(360px,calc(100% - 28px));
+    background:#fff;border:1px solid #ffd6e6;border-radius:14px;
+    box-shadow:0 16px 40px var(--shadow);padding:12px;display:none
+  }
+  #musicPanel.active{display:block} /* ← สำคัญ: ให้โผล่เมื่อกด */
   .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.95rem;cursor:pointer}
-
-/* #musicBtn {
-  position: fixed;
-  right: 14px;   /* จากเดิม left:14px → เปลี่ยนเป็น right */
-  bottom: 14px;
-  z-index: 80;
-}
-
-#musicPanel {
-  position: fixed;
-  right: 14px;   /* จากเดิม left:14px → เปลี่ยนเป็น right */
-  bottom: 68px;
-  z-index: 80;
-  width: min(360px, calc(100% - 28px));
-  background: #fff;
-  border: 1px solid #ffd6e6;
-  border-radius: 14px;
-  box-shadow: 0 16px 40px var(--shadow);
-  padding: 12px;
-  display: none;
-} */
 </style>
 </head>
 <body>
@@ -144,6 +125,7 @@
   </div>
 </main>
 
+<!-- Music -->
 <div id="musicBtn"><button class="btn">🎵 Music</button></div>
 <div id="musicPanel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -155,7 +137,7 @@
       <button id="btnUnmute" class="pill">🔊 ปลดปิดเสียง</button>
     </div>
   </div>
-  <div class="tiny" style="margin-top:6px">* ถ้าไม่ดัง ให้กด “ปลดปิดเสียง” หนึ่งครั้ง</div>
+  <div class="tiny" style="margin-top:6px">* ถ้าไม่ดัง ให้แตะ “ปลดปิดเสียง” หนึ่งครั้ง (ข้อจำกัด iOS)</div>
 </div>
 
 <script>
@@ -163,7 +145,7 @@
 const MUSIC_SRC = 'cuteJp.mp3';
 const IMG_BASE  = 'https://raw.githubusercontent.com/ntu6008111004/lover/main/images/';
 const IMAGES    = Array.from({length:10},(_,i)=> IMG_BASE + `slide${String(i+1).padStart(2,'0')}.jpg`);
-const INTERVAL_MS = 3200; // >= 3 วิ
+const INTERVAL_MS = 4000;
 
 /* ===== Gate logic ===== */
 const gate = document.getElementById('gate');
@@ -195,10 +177,11 @@ yesBtn.addEventListener('click', ()=>{
       main.classList.remove('hidden');
       hero.classList.add('blurred');
 
-      unmuteMusic(); // เปิดเสียงเพลงหลัง Yes
+      unmuteMusic(); // ปลดล็อก/เล่นเพลงหลังมี gesture แล้ว
+
       startFireworks(4000, ()=>{
         hero.classList.remove('blurred');
-        startSlides(); // ← เริ่มสไลด์หลังพลุเสร็จ
+        startSlides();
       });
     }
   },1000);
@@ -234,7 +217,6 @@ const slideData = [
   { place:  "Attika Studio", date: "03 ส.ค. 2025", desc: "แช่ะๆๆๆ" },
 ];
 
-// ✅ ปรับฟังก์ชันให้ใช้ข้อมูลข้างบน
 function renderSlides(urls){
   slideArea.innerHTML='';
   urls.forEach((u,i)=>{
@@ -242,7 +224,7 @@ function renderSlides(urls){
     const el=document.createElement('div');
     el.className='slide';
     el.innerHTML=`
-      <figure><img ${i===0?'loading="eager" fetchpriority="high"':''} src="${u}"></figure>
+      <figure><img ${i===0?'loading="eager" fetchpriority="high"':''} src="${u}" crossorigin="anonymous"></figure>
       <figcaption class="caption">
         <span class="cap-title">ภาพที่ ${i+1}/10</span>
         <div class="cap-meta">
@@ -265,37 +247,31 @@ function showSlide(next){
 }
 function nextSlide(){ showSlide((slideIndex+1)%IMAGES.length); }
 
-/* ✅ โหลดรูปแรก + แสดงแบบ instant เฟรมแรก */
 async function startSlides(){
-  // 1) preload & decode รูปแรกให้เสร็จจริง
+  // preload & decode รูปแรกให้เสร็จจริง
   const first = new Image();
   first.decoding = 'sync';
   first.crossOrigin = 'anonymous';
-  first.src = IMAGES[0] + '?v=' + Date.now(); // bust cache รอบแรก
+  first.src = IMAGES[0] + '?v=' + Date.now();
   try{
     if(first.decode){ await first.decode(); }
     else { await new Promise((res,rej)=>{ first.onload=res; first.onerror=rej; }); }
-  }catch(_){ /* ไปต่อแม้ decode fail */ }
+  }catch(_){}
 
-  // 2) render ทั้งหมด
   renderSlides(IMAGES);
 
-  // 3) บังคับเพนต์ทันทีแบบไม่แอนิเมชัน แล้วค่อยถอดให้เป็นปกติ
   const firstSlide = slideArea.querySelector('.slide');
-  firstSlide.classList.add('instant'); // ไม่ใช้ flip/opacity transition
-  // ให้เบราว์เซอร์คอมมิตสไตล์ก่อน
+  firstSlide.classList.add('instant');
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      firstSlide.classList.remove('instant'); // ถอด instant เพื่อให้สไลด์ถัดไปแอนิเมชันได้
-      firstSlide.classList.add('active');     // เฟรมนี้จึงมองเห็นแน่นอน
-      // 4) start loop (>=4 วิ)
+      firstSlide.classList.remove('instant');
+      firstSlide.classList.add('active');
       clearInterval(slideTimer);
       slideTimer=setInterval(nextSlide, INTERVAL_MS);
     });
   });
 }
 
-/* หัวใจระหว่าง flip */
 function spawnTransitionHearts(){
   const H=['💗','💖','💓','💞','💝'];
   for(let i=0;i<7;i++){
@@ -306,7 +282,7 @@ function spawnTransitionHearts(){
   }
 }
 
-/* ===== Fireworks (ย่อ) ===== */
+/* ===== Fireworks (สั้น) ===== */
 const fxBackdrop=document.getElementById('fxBackdrop');
 const fxCanvas=document.getElementById('fxCanvas');
 const fxText=document.getElementById('fxText');
@@ -339,7 +315,7 @@ function startFireworks(duration=4000,onDone=()=>{}){
   fwRaf=requestAnimationFrame(tick);
 }
 
-/* ===== Music (MP3) ===== */
+/* ===== Music (MP3) — iOS Safari friendly ===== */
 const musicBtn=document.getElementById('musicBtn');
 const musicPanel=document.getElementById('musicPanel');
 const btnPlay=document.getElementById('btnPlay');
@@ -348,18 +324,45 @@ const btnLoop=document.getElementById('btnLoop');
 const btnUnmute=document.getElementById('btnUnmute');
 musicBtn?.addEventListener('click', ()=> musicPanel.classList.toggle('active'));
 
-const bgMusic=new Audio(MUSIC_SRC);
-bgMusic.loop=true; bgMusic.volume=1.0; bgMusic.muted=true;
-let autoRetryTimer=null, autoLocked=false;
-function tryAutoplay(){ if(autoLocked) return; bgMusic.play().then(()=>{autoLocked=true; if(autoRetryTimer){clearInterval(autoRetryTimer);autoRetryTimer=null}}).catch(()=>{}) }
-document.addEventListener('DOMContentLoaded', tryAutoplay);
-['click','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e, tryAutoplay, {once:true, passive:true}));
-autoRetryTimer=setInterval(tryAutoplay,1200);
-btnPlay?.addEventListener('click', ()=> bgMusic.play().catch(()=>{}));
+// ใช้ <audio> element เพื่อความเข้ากันได้
+const bgMusic = new Audio(MUSIC_SRC);
+bgMusic.loop = true;
+bgMusic.preload = 'auto';
+bgMusic.muted = true;
+bgMusic.playsInline = true; // iOS
+bgMusic.setAttribute('playsinline','');
+bgMusic.setAttribute('webkit-playsinline','');
+
+let audioUnlocked = false;
+function iosUnlock(){
+  if(audioUnlocked) return;
+  // เล่นแบบเงียบแล้วหยุดทันที เพื่อปลดล็อกสิทธิ์การเล่น
+  bgMusic.play().then(()=>{
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    audioUnlocked = true;
+  }).catch(()=>{ /* เงียบไว้ */ });
+}
+['touchstart','pointerdown','click','keydown'].forEach(evt=>{
+  document.addEventListener(evt, iosUnlock, {once:true, passive:true});
+});
+
+// Controls
+btnPlay?.addEventListener('click', ()=>{
+  iosUnlock();
+  bgMusic.muted = false;
+  bgMusic.play().catch(()=>{});
+});
 btnPause?.addEventListener('click', ()=> bgMusic.pause());
 btnLoop ?.addEventListener('click', ()=>{ bgMusic.loop=!bgMusic.loop; btnLoop.style.borderColor=bgMusic.loop?'#b6f0c8':'#ffd6e6'; });
-btnUnmute?.addEventListener('click', ()=>{ bgMusic.muted=false; bgMusic.play().catch(()=>{}); });
-function unmuteMusic(){ bgMusic.muted=false; bgMusic.play().catch(()=>{}); }
+btnUnmute?.addEventListener('click', ()=>{ iosUnlock(); bgMusic.muted=false; bgMusic.play().catch(()=>{}); });
+
+// ใช้ตอนเข้า main หลัง YES
+function unmuteMusic(){
+  iosUnlock();
+  bgMusic.muted = false;
+  bgMusic.play().catch(()=>{});
+}
 </script>
 </body>
 </html>
