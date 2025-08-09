@@ -85,10 +85,26 @@
   @keyframes fxTextIn{0%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:1}}
 
   /* Music panel */
-  #musicBtn{position:fixed;left:14px;bottom:14px;z-index:80}
-  #musicPanel{position:fixed;left:14px;bottom:68px;z-index:80;width:min(360px,calc(100% - 28px));background:#fff;border:1px solid #ffd6e6;border-radius:14px;box-shadow:0 16px 40px var(--shadow);padding:12px;display:none}
-  #musicPanel.active{display:block}
-  .pill{border-radius:999px;border:1px solid #ffd6e6;background:#fff;padding:6px 10px;font-size:.95rem;cursor:pointer}
+#musicBtn {
+  position: fixed;
+  right: 14px;   /* จากเดิม left:14px → เปลี่ยนเป็น right */
+  bottom: 14px;
+  z-index: 80;
+}
+
+#musicPanel {
+  position: fixed;
+  right: 14px;   /* จากเดิม left:14px → เปลี่ยนเป็น right */
+  bottom: 68px;
+  z-index: 80;
+  width: min(360px, calc(100% - 28px));
+  background: #fff;
+  border: 1px solid #ffd6e6;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px var(--shadow);
+  padding: 12px;
+  display: none;
+}
 </style>
 </head>
 <body>
