@@ -154,7 +154,7 @@ const cdBackdrop = document.getElementById('cdBackdrop');
 const cdLine = document.getElementById('cdLine');
 
 noBtn.addEventListener('click', ()=>{
-  cdLine.innerHTML = 'ไม่อนุญาติให่ไม่รักหรอกนะ 😒🙄😤 จะปิดใน <strong id="cdNum">5</strong> วิ';
+  cdLine.innerHTML = 'ไม่อนุญาติให้ไม่รักหรอกนะ 😒🙄😤 จะปิดใน <strong id="cdNum">5</strong> วิ';
   cdBackdrop.classList.add('active');
   let t=5; const n=()=>document.getElementById('cdNum');
   const timer=setInterval(()=>{ t--; n().textContent=t; if(t<=0){ clearInterval(timer); cdBackdrop.classList.remove('active'); } },1000);
